@@ -2,10 +2,34 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+        <item name="buttonStyle">@style/DefaultButton</item>
+    </style>
+    <style name="AppThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/nunito_light</item>
+        <item name="buttonStyle">@style/DefaultButton</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="DefaultButton" parent="Widget.AppCompat.Button">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/default_background_button</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="DefaultButton2" parent="Widget.AppCompat.Button">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/default_2_background_button</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
     </style>
 
 </resources>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "608571680919",
+    "firebase_url": "https://amiproject-e93cb.firebaseio.com",
+    "project_id": "amiproject-e93cb",
+    "storage_bucket": "amiproject-e93cb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608571680919:android:71270cba126811080061d2",
+        "android_client_info": {
+          "package_name": "ec.tec.ami"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608571680919-acd9pbhgosdqtr5aij57128p7co8btl4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ec.tec.ami",
+            "certificate_hash": "47b1a583d856bc02b05f22778ed2656c65822a0b"
+          }
+        },
+        {
+          "client_id": "608571680919-saqsf6ku6v125aor61ujejnotask0k0f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKCYHaAgrjAd5f3PGLxStdE2v3U0f97GY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608571680919-saqsf6ku6v125aor61ujejnotask0k0f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

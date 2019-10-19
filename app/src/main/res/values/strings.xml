@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Ami</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_btn">Log in</string>
+    <string name="signIn_btn">Create an account</string>
+    <string name="login_google">Continue with Google</string>
+    <string name="forgot_password"><u>Forgot password?</u></string>
 </resources>
