@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
     private GoogleSignInOptions signInOptions;
     private GoogleSignInClient signInClient;
-    private Button btnGoogleLogin;
+    private Button btnGoogleLogin, btnSignIn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,10 +40,17 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 .build();
         signInClient =  GoogleSignIn.getClient(this, signInOptions);
         btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
+        btnSignIn = findViewById(R.id.btnSignIn);
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginGoole();
+            }
+        });
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openCreateAccount();
             }
         });
     }
@@ -86,5 +93,10 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         } catch (ApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private void openCreateAccount(){
+        Intent intent = new Intent(this,CreateAccountEmailActivity.class);
+        startActivity(intent);
     }
 }

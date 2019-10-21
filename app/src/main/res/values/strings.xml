@@ -6,4 +6,11 @@
     <string name="signIn_btn">Create an account</string>
     <string name="login_google">Continue with Google</string>
     <string name="forgot_password"><u>Forgot password?</u></string>
+    <string name="create_account_title">Create an account</string>
+    <string name="education">Add your education</string>
+    <string name="date">Date</string>
+    <string name="institute">Institution</string>
+    <string name="add">Add</string>
+    <string name="next">Next</string>
+    <string name="password__confirm_hint">Confirm password</string>
 </resources>
