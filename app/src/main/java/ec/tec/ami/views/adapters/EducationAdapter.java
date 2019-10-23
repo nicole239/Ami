@@ -1,4 +1,4 @@
-package ec.tec.ami.views.fragments;
+package ec.tec.ami.views.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

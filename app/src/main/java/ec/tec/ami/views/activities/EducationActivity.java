@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,25 +14,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 import ec.tec.ami.R;
 import ec.tec.ami.model.Education;
-import ec.tec.ami.views.fragments.EducationAdapter;
+import ec.tec.ami.views.adapters.EducationAdapter;
 
 public class EducationActivity extends AppCompatActivity implements EducationAdapter.ItemListener {
 
@@ -73,6 +69,12 @@ public class EducationActivity extends AppCompatActivity implements EducationAda
 
             }
         });
+
+
+        Calendar currentDate = Calendar.getInstance();
+        year = currentDate.get(Calendar.YEAR);
+        month = currentDate.get(Calendar.MONTH);
+        day = currentDate.get(Calendar.DAY_OF_MONTH);
 
         Intent intent = getIntent();
         list = (List<Education>)intent.getSerializableExtra("list");

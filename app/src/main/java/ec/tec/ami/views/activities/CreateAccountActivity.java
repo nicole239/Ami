@@ -27,6 +27,18 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,6 +67,9 @@ public class CreateAccountActivity extends AppCompatActivity {
     private String email, password, profileURL;
     private boolean isGoogle;
     private ProgressBar progressBar;
+    private DatabaseReference reference;
+    private FirebaseDatabase database;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +152,10 @@ public class CreateAccountActivity extends AppCompatActivity {
         email = intent.getStringExtra("email");
         password = intent.getStringExtra("password");
         isGoogle = intent.getBooleanExtra("isGoogle",false);
+
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference().child("users");
+        auth = FirebaseAuth.getInstance();
     }
 
     private void selectEducation() {
@@ -175,7 +194,7 @@ public class CreateAccountActivity extends AppCompatActivity {
             return;
 
         Calendar calendar = Calendar.getInstance();
-        User user = new User();
+        final User user = new User();
         user.setName(name);
         user.setLastNameA(lastName);
         user.setLastNameB(lastName2);
@@ -192,8 +211,63 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
         btnNext.setEnabled(false);
+        if(!isGoogle) {
+
+            auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                registerInFireBase(user);
+                            } else {
+                                Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                                enableButton();
+                            }
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                            enableButton();
+                        }
+                    });
+        }else{
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+            user.setEmail(account.getEmail());
+            registerInFireBase(user);
+        }
 
 
+    }
+
+    private void registerInFireBase(User user){
+        reference.push().setValue(user)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(CreateAccountActivity.this, "Account created", Toast.LENGTH_LONG).show();
+                            finish();
+                        } else {
+                            Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                            enableButton();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                        enableButton();
+                    }
+                });
+    }
+
+    private void enableButton(){
+        progressBar.setVisibility(View.INVISIBLE);
+        btnNext.setEnabled(true);
     }
 
     private boolean isEmpty(String... texts){
