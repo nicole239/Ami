@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
     private GoogleSignInOptions signInOptions;
     private GoogleSignInClient signInClient;
-    private Button btnGoogleLogin, btnSignIn;
+    private Button btnGoogleLogin, btnSignIn, btnLogIn;
     private DatabaseReference reference;
     private FirebaseDatabase database;
     private FirebaseAuth auth;
@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         signInClient =  GoogleSignIn.getClient(this, signInOptions);
         btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         btnSignIn = findViewById(R.id.btnSignIn);
+        btnLogIn = findViewById(R.id.btnLogin);
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,6 +70,13 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             @Override
             public void onClick(View view) {
                 openCreateAccount();
+            }
+        });
+        //CAMBIAR METODO
+        btnLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginSuccess();
             }
         });
         database = FirebaseDatabase.getInstance();
@@ -165,8 +173,14 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Toast.makeText(LoginActivity.this,"Login successful",Toast.LENGTH_LONG).show();
+                    loginSuccess();
                 }
             }
         });
+    }
+
+    private void loginSuccess(){
+        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
     }
 }

@@ -11,6 +11,7 @@
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="alertDialogStyle">@style/AlertDialogCustom</item>
     </style>
+
     <style name="AppThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -21,6 +22,7 @@
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="alertDialogStyle">@style/AlertDialogCustom</item>
     </style>
+
     <style name="DefaultButton" parent="Widget.AppCompat.Button">
         <item name="android:fontFamily">@font/nunito_bold</item>
         <item name="android:textColor">@android:color/white</item>
@@ -29,6 +31,7 @@
         <item name="android:paddingRight">20dp</item>
         <item name="android:textSize">12sp</item>
     </style>
+
     <style name="DefaultButton2" parent="Widget.AppCompat.Button">
         <item name="android:fontFamily">@font/nunito_bold</item>
         <item name="android:textColor">@android:color/white</item>
@@ -37,6 +40,7 @@
         <item name="android:paddingRight">20dp</item>
         <item name="android:textSize">12sp</item>
     </style>
+
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
 
     </style>
@@ -44,5 +48,14 @@
     <style name="TextStyle">
         <item name="android:fontFamily">@font/nunito_light</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
