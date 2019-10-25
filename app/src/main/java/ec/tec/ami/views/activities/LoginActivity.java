@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     private GoogleSignInOptions signInOptions;
     private GoogleSignInClient signInClient;
     private Button btnGoogleLogin, btnSignIn;
-    private FirebaseDatabase database;
+    private Button btnGoogleLogin, btnSignIn, btnLogIn;
     private EditText txtEmail, txtPassword;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         signInClient =  GoogleSignIn.getClient(this, signInOptions);
         btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         btnSignIn = findViewById(R.id.btnSignIn);
+        btnLogIn = findViewById(R.id.btnLogin);
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,6 +63,13 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             @Override
             public void onClick(View view) {
                 openCreateAccount();
+            }
+        });
+        //CAMBIAR METODO
+        btnLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginSuccess();
             }
         });
         database = FirebaseDatabase.getInstance();
@@ -167,7 +175,12 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             @Override
             public void onFailure(Exception e) {
                 Toast.makeText(LoginActivity.this,"Email or password incorrect",Toast.LENGTH_LONG);
-            }
+			}
         });
+    }
+
+    private void loginSuccess(){
+        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
     }
 }

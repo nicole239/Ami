@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "608571680919-avepqf204mkcejvo6b61pn91fivuogf9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ec.tec.ami",
+            "certificate_hash": "4dc91fe68cadc327a5ae828dbe504c6ebb185feb"
+          }
+        },
+        {
           "client_id": "608571680919-acd9pbhgosdqtr5aij57128p7co8btl4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
