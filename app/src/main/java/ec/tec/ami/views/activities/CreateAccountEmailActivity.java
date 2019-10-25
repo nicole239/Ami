@@ -69,6 +69,10 @@ public class CreateAccountEmailActivity extends AppCompatActivity {
 
         if(email.trim().isEmpty() || password.trim().isEmpty() || confirm.trim().isEmpty())
             return;
+        if(password.length()<6){
+            Toast.makeText(this,"The password length must be at least 6",Toast.LENGTH_LONG).show();
+            return;
+        }
         if(!password.equals(confirm)){
             Toast.makeText(this,"Password don\'t match",Toast.LENGTH_LONG).show();
             return;

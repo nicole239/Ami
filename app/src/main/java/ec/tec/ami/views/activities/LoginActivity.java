@@ -6,9 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -16,9 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.internal.OnConnectionFailedListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,16 +24,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.security.AuthProvider;
 
 import ec.tec.ami.R;
+import ec.tec.ami.data.dao.UserDAO;
+import ec.tec.ami.data.event.UserEvent;
 
 public class LoginActivity extends AppCompatActivity implements OnConnectionFailedListener {
 
@@ -44,9 +38,8 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     private GoogleSignInOptions signInOptions;
     private GoogleSignInClient signInClient;
     private Button btnGoogleLogin, btnSignIn;
-    private DatabaseReference reference;
     private FirebaseDatabase database;
-    private FirebaseAuth auth;
+    private EditText txtEmail, txtPassword;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginGoole();
+                loginGoogle();
             }
         });
         btnSignIn.setOnClickListener(new View.OnClickListener() {
@@ -72,8 +65,8 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             }
         });
         database = FirebaseDatabase.getInstance();
-        reference = database.getReference().child("users");
-        auth = FirebaseAuth.getInstance();
+        txtEmail = findViewById(R.id.txtEmail);
+        txtPassword = findViewById(R.id.txtPassword);
     }
 
     @Override
@@ -100,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         }
     }
 
-    private void loginGoole(){
+    private void loginGoogle(){
         Intent intent = signInClient.getSignInIntent();
         startActivityForResult(intent,GOOGLE_LOGIN);
     }
@@ -109,12 +102,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         try {
             if(completedTask.isSuccessful()) {
                 GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-                String user = "";
-                user = "Name: "+account.getDisplayName();
-                user += "\nEmail: "+account.getEmail();
-                user += "\nId: " + account.getId();
                 checkAccount(account, true);
-                Toast.makeText(this,user,Toast.LENGTH_LONG).show();
             }
         } catch (ApiException e) {
             e.printStackTrace();
@@ -127,45 +115,58 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     }
 
     private void checkAccount(final GoogleSignInAccount account, final boolean register){
-        Query query = reference.orderByChild("email").equalTo(account.getEmail());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        UserDAO.getInstance().checkEmail(account.getEmail(),new UserEvent() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+            public void onSuccess(boolean state){
+                if(state){
                     signInWithGoogle(account);
-                }else{
-                    if(register) {
-                        Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);
-                        intent.putExtra("email", account.getEmail());
-                        intent.putExtra("password", "");
-                        intent.putExtra("isGoogle",true);
-                        startActivity(intent);
-                    }else{
-                        GoogleSignIn.getClient(LoginActivity.this,signInOptions).signOut()
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                    }
-                                });
-                    }
+                }else if(register){
+                    Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);
+                    intent.putExtra("email", account.getEmail());
+                    intent.putExtra("password", "");
+                    intent.putExtra("isGoogle",true);
+                    startActivity(intent);
                 }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
 
     private void signInWithGoogle(GoogleSignInAccount account){
-        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
-        auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        UserDAO.getInstance().loginWithGoogle(account, new UserEvent(){
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
-                    Toast.makeText(LoginActivity.this,"Login successful",Toast.LENGTH_LONG).show();
-                }
+            public void onSuccess() {
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                GoogleSignIn.getClient(LoginActivity.this, signInOptions).signOut()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    private void signInWithEmail(){
+        String email = txtEmail.getText().toString();
+        String password = txtPassword.getText().toString();
+
+        if(email.trim().isEmpty() || password.trim().isEmpty()){
+            return;
+        }
+        UserDAO.getInstance().loginWithEmail(email, password, new UserEvent(){
+            @Override
+            public void onSuccess() {
+                super.onSuccess();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(LoginActivity.this,"Email or password incorrect",Toast.LENGTH_LONG);
             }
         });
     }

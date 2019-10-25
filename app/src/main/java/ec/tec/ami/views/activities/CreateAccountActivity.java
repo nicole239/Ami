@@ -235,6 +235,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                     });
         }else{
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+            user.setProfilePhoto(account.getPhotoUrl().toString());
             user.setEmail(account.getEmail());
             registerInFireBase(user);
         }
