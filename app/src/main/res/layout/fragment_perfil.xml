@@ -1,14 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.fragments.PerfilFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+            <Button
+                android:id="@+id/btnPerfilUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="20dp"
+                android:text="Modificar"/>
+
+            <Button
+                android:id="@+id/btnPerfilAddDelFriend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="0dp"
+                android:text="Solicitud" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgPerfilPicture"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_below="@+id/btnPerfilUpdate"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/default_perfil" />
+
+            <TextView
+                android:id="@+id/txtPerfilName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/imgPerfilPicture"
+                android:text="Name LastName1 LastName2"
+                android:textSize="25dp"
+                android:textStyle="bold"/>
+
+
+
+
+            <Button
+                android:id="@+id/btnPerfilViewData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtPerfilName"
+                android:layout_centerInParent="true"
+                android:text="Ver Info"/>
+
+            <Button
+                android:id="@+id/btnPerfilViewFriends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btnPerfilViewData"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Ver Amigos"/>
+
+            <TextView
+                android:id="@+id/lblPerfilFotos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btnPerfilViewFriends"
+                android:layout_marginStart="20dp"
+                android:text="Fotos"/>
+
+            <in.goodiebag.carouselpicker.CarouselPicker
+                android:id="@+id/carouselPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/lblPerfilFotos" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/listPerfilPosts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/carouselPerfil"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/listPerfilPosts"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="20dp"
+                android:background="#F44336"
+                android:text="Eliminar cuenta" />
+        </RelativeLayout>
+
+    </ScrollView>
+
+
 
 </FrameLayout>
