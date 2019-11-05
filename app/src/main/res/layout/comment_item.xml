@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgComment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/default_perfil" />
+
+    <TextView
+        android:id="@+id/txtCommentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imgComment"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/imgComment"
+        android:text="Nombre"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/txtCommentDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/imgComment"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/imgComment"
+        android:text="10/10/2019" />
+
+    <TextView
+        android:id="@+id/txtComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_below="@id/imgComment"
+        android:text="Comentario"/>
+
+</RelativeLayout>

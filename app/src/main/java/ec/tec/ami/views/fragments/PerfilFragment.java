@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import java.util.List;
 import ec.tec.ami.R;
 import ec.tec.ami.model.Education;
 import ec.tec.ami.model.User;
+import ec.tec.ami.views.adapters.PostAdapter;
 
 
 public class PerfilFragment extends Fragment {
@@ -34,6 +37,8 @@ public class PerfilFragment extends Fragment {
     TextView txtCity;
     TextView txtPhone;
     ListView listEducation;
+    RecyclerView listPosts;
+    PostAdapter postAdapter;
 
     public PerfilFragment() {
         // Required empty public constructor
@@ -53,6 +58,7 @@ public class PerfilFragment extends Fragment {
         txtCity = view.findViewById(R.id.txtPerfilCity);
         txtPhone = view.findViewById(R.id.txtPerfilPhone);
         listEducation  = view.findViewById(R.id.listPerfilEducation);
+        listPosts = view.findViewById(R.id.listPerfilPosts);
 
         Button btnPerfilViewData = view.findViewById(R.id.btnPerfilViewData);
         btnPerfilViewData.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +94,12 @@ public class PerfilFragment extends Fragment {
         }
         ArrayAdapter<String> educationAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, items);
         listEducation.setAdapter(educationAdapter);
+        listPosts.setLayoutManager(new LinearLayoutManager(getContext()));
+        postAdapter = new PostAdapter(getContext(), user.getPosts());
+        //postAdapter.setClickListener(this);
+        listPosts.setAdapter(postAdapter);
     }
+
 
 
 }

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgPostUser"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/default_perfil" />
+
+    <TextView
+        android:id="@+id/txtPostName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imgPostUser"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/imgPostUser"
+        android:text="Nombre"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/txtPostTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imgPostUser"
+        android:layout_below="@id/txtPostName"
+        android:layout_alignBottom="@+id/imgPostUser"
+        android:layout_marginStart="10dp"
+        android:text="Hace x tiempo"/>
+
+    <TextView
+        android:id="@+id/txtPostDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgPostUser"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="description"/>
+
+    <LinearLayout
+        android:id="@+id/frameMultimedia"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:orientation="vertical"
+        android:layout_below="@id/txtPostDescription"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/imgPost"
+            android:layout_below="@id/txtPostDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <VideoView
+            android:id="@+id/videoPost"
+            android:layout_below="@id/txtPostDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/lblLikes"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/frameMultimedia"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:srcCompat="@drawable/ic_like_24dp" />
+
+    <TextView
+        android:id="@+id/txtPostLikes"
+        android:layout_below="@id/frameMultimedia"
+        android:layout_toEndOf="@id/lblLikes"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:text="30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/lblDislikes"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/frameMultimedia"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@id/txtPostLikes"
+        app:srcCompat="@drawable/ic_dislike_24dp" />
+
+    <TextView
+        android:id="@+id/txtPostDislikes"
+        android:layout_below="@id/frameMultimedia"
+        android:layout_toEndOf="@id/lblDislikes"
+        android:layout_alignBaseline="@id/lblDislikes"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:text="5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/lblPostComments"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/frameMultimedia"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@id/txtPostDislikes"
+        app:srcCompat="@drawable/ic_comment_24dp" />
+
+    <ScrollView
+        android:layout_below="@id/lblPostComments"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ListView
+            android:id="@+id/listPostComments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
+
+
+
+
+</RelativeLayout>
