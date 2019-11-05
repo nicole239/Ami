@@ -29,4 +29,9 @@ public class Education implements Serializable {
     public void setInstitute(String institute) {
         this.institute = institute;
     }
+
+    @Override
+    public String toString() {
+        return  date + " - " + institute;
+    }
 }
