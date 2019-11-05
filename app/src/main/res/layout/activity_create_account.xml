@@ -94,7 +94,8 @@
                         android:layout_below="@id/tvName"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:layout_marginTop="10dp" />
+                        android:layout_marginTop="10dp"
+                        android:nextFocusDown="@id/txtLastName"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -118,7 +119,8 @@
                         android:layout_below="@id/tvLastName"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:layout_marginTop="10dp"/>
+                        android:layout_marginTop="10dp"
+                        android:nextFocusDown="@id/txtLastName2"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -142,7 +144,8 @@
                         android:layout_below="@id/tvLastName2"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:layout_marginTop="10dp"/>
+                        android:layout_marginTop="10dp"
+                        android:nextFocusDown="@id/spinnerGender"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -167,7 +170,8 @@
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
                         android:layout_marginTop="10dp"
-                        android:spinnerMode="dialog"/>
+                        android:spinnerMode="dialog"
+                        android:nextFocusDown="@id/txtBirthday"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -193,7 +197,8 @@
                     android:paddingRight="10dp"
                     android:layout_marginTop="10dp"
                     android:inputType="date"
-                    android:focusable="false"/>
+                    android:focusable="false"
+                    android:nextFocusDown="@id/txtCity"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -217,7 +222,8 @@
                         android:layout_below="@id/tvCity"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"
-                        android:layout_marginTop="10dp"/>
+                        android:layout_marginTop="10dp"
+                        android:nextFocusDown="@id/txtTelephone"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -243,6 +249,7 @@
                         android:paddingRight="10dp"
                         android:layout_marginTop="10dp"
                         android:inputType="number"
+                        android:nextFocusDown="@id/btnEducation"
                         />
                 </RelativeLayout>
 

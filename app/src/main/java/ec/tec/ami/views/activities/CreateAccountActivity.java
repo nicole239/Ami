@@ -32,10 +32,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -49,6 +47,8 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import ec.tec.ami.R;
+import ec.tec.ami.data.dao.ImageDAO;
+import ec.tec.ami.data.event.ImageEvent;
 import ec.tec.ami.model.Education;
 import ec.tec.ami.model.User;
 
@@ -56,12 +56,12 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private static final int GALLERY = 1, CAMERA = 2, EDUCATION = 3;
 
+    private Uri uri;
     private Button btnNext, btnEducation;
     private Spinner spinnerGender;
     private EditText txtBirthday,txtName, txtLastName, txtLastName2, txtCity, txtTelephone;
     private ImageView imgSelect;
     private CircleImageView imgProfile;
-    private Uri uri;
     private int day, month,year;
     private List<Education> education = new ArrayList<>();
     private String email, password, profileURL;
@@ -214,25 +214,25 @@ public class CreateAccountActivity extends AppCompatActivity {
         if(!isGoogle) {
 
             auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                registerInFireBase(user);
-                            } else {
-                                Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
-                                enableButton();
-                            }
+            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        registerInFireBase(user);
+                    } else {
+                        Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                        enableButton();
+                    }
 
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
-                            enableButton();
-                        }
-                    });
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                    enableButton();
+                }
+            });
         }else{
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
             user.setProfilePhoto(account.getPhotoUrl().toString());
@@ -243,27 +243,40 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     }
 
-    private void registerInFireBase(User user){
-        reference.push().setValue(user)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(CreateAccountActivity.this, "Account created", Toast.LENGTH_LONG).show();
-                            finish();
-                        } else {
-                            Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
-                            enableButton();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
-                        enableButton();
-                    }
-                });
+    private void registerInFireBase(final User user){
+        ImageDAO.getInstance().uploadImage(uri,"profile/"+user.getID(),new ImageEvent(){
+            @Override
+            public void onSuccess(String link) {
+                user.setProfilePhoto(link);
+                reference.child(user.getID()).setValue(user)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(CreateAccountActivity.this, "Account created", Toast.LENGTH_LONG).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                                    enableButton();
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                                enableButton();
+                            }
+                        });
+            }
+
+            @Override
+            public void onFailure(String err) {
+                Toast.makeText(CreateAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                enableButton();
+            }
+        });
+
     }
 
     private void enableButton(){
@@ -342,6 +355,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         if(requestCode == CAMERA || requestCode == GALLERY){
             if(resultCode == Activity.RESULT_OK){
                 imgProfile.setImageURI(data.getData());
+                uri = data.getData();
             }
         }
         if(requestCode == EDUCATION){

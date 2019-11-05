@@ -1,10 +1,7 @@
 package ec.tec.ami.data.dao;
 
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,17 +16,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.User;
-import ec.tec.ami.views.activities.LoginActivity;
 
 public class UserDAO {
     private static UserDAO userDAO;
     FirebaseDatabase database;
     FirebaseAuth auth;
+    FirebaseStorage storage;
     private UserDAO(){
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -93,6 +92,54 @@ public class UserDAO {
                     event.onSuccess(true);
                 }else{
                     event.onSuccess(false);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                event.onFailure(databaseError.toException());
+            }
+        });
+    }
+
+    public void listFriends(final User user, final UserEvent event){
+        final List<User> friends = new ArrayList<>();
+        DatabaseReference reference = database.getReference().child("users/"+user.getID()+"/friends");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User friend = new User();
+                if(dataSnapshot.getChildrenCount()==0){
+                    friend.setEmail(dataSnapshot.getValue(String.class));
+                    friends.add(friend);
+                }
+                for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    friend.setEmail(snapshot.getValue(String.class));
+                    friends.add(friend);
+                }
+                event.onSuccess(friends);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                event.onFailure(databaseError.toException());
+            }
+        });
+    }
+
+    public void getUser(String email, final UserEvent event){
+        DatabaseReference reference = database.getReference().child("users");
+        Query query = reference.orderByChild("email").equalTo(email);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+                        event.onSuccess(snapshot.getValue(User.class));
+                    }
+
+
+                }else{
+                    event.onFailure(new Exception("No data was found"));
                 }
             }
             @Override
