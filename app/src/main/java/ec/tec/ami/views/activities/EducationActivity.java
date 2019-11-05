@@ -90,7 +90,7 @@ public class EducationActivity extends AppCompatActivity implements EducationAda
         recyclerView.setLayoutManager(linearLayoutManager);
         btnAdd = findViewById(R.id.btnAdd);
         btnAdd.setEnabled(false);
-        txtDate = findViewById(R.id.txtDate);
+        txtDate = findViewById(R.id.tvName);
         txtInstitution = findViewById(R.id.txtInstitution);
 
         txtDate.setOnClickListener(new View.OnClickListener() {

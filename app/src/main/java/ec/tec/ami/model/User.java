@@ -139,4 +139,8 @@ public class User {
     public void setPosts(List<Post> posts) {
         this.posts = posts;
     }
+
+    public String getID(){
+        return getEmail().replace(".","_").replace("@","_");
+    }
 }

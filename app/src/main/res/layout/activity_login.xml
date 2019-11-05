@@ -5,6 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.activities.LoginActivity">
+    <RelativeLayout
+        android:id="@+id/lytPlaceHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="10dp"
+        android:background="@android:color/white">
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/circular_logo"
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/topBar"

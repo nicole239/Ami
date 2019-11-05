@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -37,9 +38,9 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
     private GoogleSignInOptions signInOptions;
     private GoogleSignInClient signInClient;
-    private Button btnGoogleLogin, btnSignIn;
     private Button btnGoogleLogin, btnSignIn, btnLogIn;
     private EditText txtEmail, txtPassword;
+    private RelativeLayout layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,16 +66,16 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 openCreateAccount();
             }
         });
-        //CAMBIAR METODO
+
         btnLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginSuccess();
+                signInWithEmail();
             }
         });
-        database = FirebaseDatabase.getInstance();
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
+        layout = findViewById(R.id.lytPlaceHolder);
     }
 
     @Override
@@ -83,6 +84,8 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account != null){
             checkAccount(account,false);
+        }else{
+            layout.setVisibility(View.GONE);
         }
     }
 
@@ -143,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         UserDAO.getInstance().loginWithGoogle(account, new UserEvent(){
             @Override
             public void onSuccess() {
-                finish();
+                loginSuccess();
             }
 
             @Override
@@ -169,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         UserDAO.getInstance().loginWithEmail(email, password, new UserEvent(){
             @Override
             public void onSuccess() {
-                super.onSuccess();
+                loginSuccess();
             }
 
             @Override
@@ -180,6 +183,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     }
 
     private void loginSuccess(){
+        finish();
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
     }
