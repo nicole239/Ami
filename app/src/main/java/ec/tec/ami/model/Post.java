@@ -11,7 +11,7 @@ public class Post {
     private String description;
     private String media;
     private Date date;
-    private String type;
+    private Type type;
     private List<String> likes;
     private List<String> dislikes;
     private List<Comment> comments;
@@ -23,7 +23,7 @@ public class Post {
         this.description = description;
         this.media = media;
         this.date = date;
-        this.type = type.toString();
+        this.type = type;
         this.likes = new ArrayList<>();
         this.dislikes = new ArrayList<>();
         this.comments = new ArrayList<>();
@@ -34,7 +34,7 @@ public class Post {
         this.description = description;
         this.media = media;
         this.date = date;
-        this.type = type.toString();
+        this.type = type;
         this.likes = likes;
         this.dislikes = dislikes;
         this.comments = comments;
@@ -72,11 +72,11 @@ public class Post {
         this.date = date;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

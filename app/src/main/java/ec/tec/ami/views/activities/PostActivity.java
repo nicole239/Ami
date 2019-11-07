@@ -63,7 +63,7 @@ public class PostActivity extends AppCompatActivity {
     private ImageView imgPhotoView, imgVideo, imgPhoto;
     private String URL;
     private TextView tvTitle;
-    private Type type;
+    private Type type = Type.TEXT;
     private ProgressBar progressBar;
     private EditText txtPost;
 
