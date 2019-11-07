@@ -28,7 +28,6 @@ public class UserDAO {
     private static UserDAO userDAO;
     FirebaseDatabase database;
     FirebaseAuth auth;
-    FirebaseStorage storage;
     private UserDAO(){
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -145,6 +144,27 @@ public class UserDAO {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 event.onFailure(databaseError.toException());
+            }
+        });
+    }
+
+    public void getUserPhoto(String email, final UserEvent event){
+        final User user = new User();
+        user.setEmail(email);
+        DatabaseReference reference = database.getReference().child("users/"+user.getID()+"/profilePhoto");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    User newUser = new User();
+                    newUser.setProfilePhoto(dataSnapshot.getValue(String.class));
+                    event.onSuccess(newUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

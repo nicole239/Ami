@@ -1,4 +1,4 @@
 package ec.tec.ami.model;
 
-public class Comentario {
+public class Comment {
 }

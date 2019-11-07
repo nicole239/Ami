@@ -23,6 +23,10 @@
         <item name="alertDialogStyle">@style/AlertDialogCustom</item>
     </style>
 
+    <style name="DefaultButtonParent" parent="Widget.AppCompat.Button">
+
+    </style>
+
     <style name="DefaultButton" parent="Widget.AppCompat.Button">
         <item name="android:fontFamily">@font/nunito_bold</item>
         <item name="android:textColor">@android:color/white</item>
@@ -41,12 +45,27 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="DefaultButton3" parent="Widget.AppCompat.Button">
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/background_default_3_button</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
 
     </style>
 
     <style name="TextStyle">
         <item name="android:fontFamily">@font/nunito_light</item>
+    </style>
+
+    <style name="TextStyleOutline" parent="TextStyle">
+        <item name="android:background">@drawable/background_outline</item>
+        <item name="android:color">@color/colorPrimaryDark</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
