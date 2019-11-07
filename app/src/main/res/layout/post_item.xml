@@ -10,7 +10,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:src="@drawable/default_perfil" />
+        android:background="@drawable/default_perfil" />
 
     <TextView
         android:id="@+id/txtPostName"
@@ -72,7 +72,7 @@
         android:layout_below="@id/frameMultimedia"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        app:srcCompat="@drawable/ic_like_24dp" />
+        android:background="@drawable/ic_like_24dp" />
 
     <TextView
         android:id="@+id/txtPostLikes"
@@ -92,7 +92,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/txtPostLikes"
-        app:srcCompat="@drawable/ic_dislike_24dp" />
+        android:background="@drawable/ic_dislike_24dp" />
 
     <TextView
         android:id="@+id/txtPostDislikes"
@@ -113,7 +113,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/txtPostDislikes"
-        app:srcCompat="@drawable/ic_comment_24dp" />
+        android:background="@drawable/ic_comment_24dp" />
 
     <ScrollView
         android:layout_below="@id/lblPostComments"

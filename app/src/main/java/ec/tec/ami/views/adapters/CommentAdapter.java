@@ -14,11 +14,11 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import ec.tec.ami.R;
-import ec.tec.ami.model.Comentario;
+import ec.tec.ami.model.Comment;
 
-public class CommentAdapter extends ArrayAdapter<Comentario> {
+public class CommentAdapter extends ArrayAdapter<Comment> {
 
-    public CommentAdapter(@NonNull Context context, List<Comentario> comments) {
+    public CommentAdapter(@NonNull Context context, List<Comment> comments) {
         super(context, 0,comments);
     }
 
@@ -26,7 +26,7 @@ public class CommentAdapter extends ArrayAdapter<Comentario> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-        Comentario comment = getItem(position);
+        Comment comment = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.comment_item, parent, false);
@@ -37,9 +37,9 @@ public class CommentAdapter extends ArrayAdapter<Comentario> {
         TextView txtComment = (TextView) convertView.findViewById(R.id.txtComment);
         ImageView imgView = (ImageView) convertView.findViewById(R.id.imgComment);
         // Populate the data into the template view using the data object
-        txtName.setText(comment.getUsuario().getName());
-        txtTime.setText(comment.getFecha().toString());
-        txtComment.setText(comment.getComentario());
+        txtName.setText(comment.getUser().getName());
+        txtTime.setText(comment.getDate().toString());
+        txtComment.setText(comment.getComment());
         //TODO: DISPLAY PHOTO PERFIL
         //imgView.setImageBitmap(comment.getUsuario().getProfilePhoto());
 

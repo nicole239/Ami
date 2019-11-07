@@ -46,12 +46,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         //TODO: MOSTRAR FOTO PERFIL
         //holder.imgUser.setImageBitmap(post.getUsuario().getImage());
-        holder.txtName.setText(post.getUsuario());
-        holder.txtTime.setText(post.getFecha().toString());
-        holder.txtDescription.setText(post.getDescripcion());
+        holder.txtName.setText(post.getUser());
+        holder.txtTime.setText(post.getDate().toString());
+        holder.txtDescription.setText(post.getDescription());
         //TODO: DISTINGUIR VIDEO/IMAGEN EN POST
 
-        if(post.getMultimtdia() != null){
+        if(post.getMedia() != null){
             holder.multimediaFrame.setVisibility(View.VISIBLE);
             //if(ES IMAGEN){
                 //TODO: MOSTRAR IMAGEN
@@ -63,7 +63,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         }
         holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
         holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
-        CommentAdapter adapter = new CommentAdapter(context, post.getComentarios());
+        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
         holder.listComments.setAdapter(adapter);
     }
 

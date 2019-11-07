@@ -42,7 +42,7 @@
                 android:layout_below="@+id/btnPerfilUpdate"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"
-                android:src="@drawable/default_perfil" />
+                android:background="@drawable/default_perfil" />
 
             <TextView
                 android:id="@+id/txtPerfilName"
@@ -108,7 +108,7 @@
                     android:layout_below="@+id/lblBirthday"
                     android:layout_marginTop="10dp"
                     android:layout_toStartOf="@id/txtPerfilGender"
-                    app:srcCompat="@drawable/gender_icon" />
+                    android:src="@drawable/gender_icon" />
 
                 <TextView
                     android:id="@+id/txtPerfilGender"
