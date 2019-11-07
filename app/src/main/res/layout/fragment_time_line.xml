@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <RelativeLayout
+            android:id="@+id/timeline_post_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -29,5 +30,17 @@
                 android:padding="8dp"
                 style="@style/TextStyleOutline"/>
         </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/timeline_post_layout">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/timeline_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+
+        </LinearLayout>
     </RelativeLayout>
 </FrameLayout>
