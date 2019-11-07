@@ -97,7 +97,13 @@ public class Post {
     }
 
     public List<Comment> getComments() {
-        return comments;
+        if(comments!=null) {
+            return comments;
+        }
+        else{
+            return
+                new ArrayList<Comment>();
+        }
     }
 
     public void setComments(List<Comment> comments) {
@@ -105,10 +111,20 @@ public class Post {
     }
 
     public int getTotalLikes(){
-        return likes.size();
+        if(likes!= null) {
+            return likes.size();
+        }
+        else{
+            return 0;
+        }
     }
 
     public int getTotalDislikes(){
-        return dislikes.size();
+        if(dislikes!=null) {
+            return dislikes.size();
+        }
+        else{
+            return 0;
+        }
     }
 }

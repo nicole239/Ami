@@ -1,20 +1,32 @@
 package ec.tec.ami.views.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.VideoView;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ec.tec.ami.R;
 import ec.tec.ami.model.Post;
@@ -26,6 +38,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private List<Post> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    final String youTubeUrlRegEx = "^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))/";
+    final String[] videoIdRegex = { "\\?vi?=([^&]*)","watch\\?.*v=([^&]*)", "(?:embed|vi?)/([^/?]*)", "^([A-Za-z0-9\\-]*)"};
 
     // data is passed into the constructor
     public PostAdapter(Context context, List<Post> data) {
@@ -42,7 +56,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Post post = mData.get(position);
 
         //TODO: MOSTRAR FOTO PERFIL
@@ -55,17 +69,69 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         if(post.getMedia() != null && !post.getMedia().isEmpty()){
             holder.multimediaFrame.setVisibility(View.VISIBLE);
             if(post.getType()== Type.PHOTO){
+            if(post.getType() == Type.PHOTO){
                 //TODO: MOSTRAR IMAGEN
                 holder.img.setVisibility(View.VISIBLE);
             }else if (post.getType() == Type.VIDEO){
                 //TODO: MOSTRAR VIDEO EN YOUTUBE
-                holder.video.setVisibility(View.VISIBLE);
+
             }
         }
         holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
         holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
 //        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
 //        holder.listComments.setAdapter(adapter);
+
+                holder.video.getSettings().setJavaScriptEnabled(true);
+                holder.video.setWebChromeClient(new WebChromeClient(){
+
+                });/*
+                if(post.getMedia()!=""){
+                    String embed = "iframe width=\"100%\" height=\"100%\" src=\" post.getMedia()\"frameborder=\"0\" allowfullscreen></iframe>";
+                    holder.video.loadData(embed, "text/html","utf-8");
+                }
+*/
+                String videoID = urlToEmbeded(post.getMedia());
+
+                String urll = "https://www.youtube.com/embed/"+videoID;
+               holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
+                //holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/eWEF1Zrmdow\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
+                
+            }
+
+        }
+        holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
+        holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
+        holder.listComments.setAdapter(adapter);
+    }
+
+
+    public String urlToEmbeded(String url){
+
+        String youTubeLinkWithoutProtocolAndDomain = youTubeLinkWithoutProtocolAndDomain(url);
+
+        for(String regex : videoIdRegex) {
+            Pattern compiledPattern = Pattern.compile(regex);
+            Matcher matcher = compiledPattern.matcher(youTubeLinkWithoutProtocolAndDomain);
+
+            if(matcher.find()){
+                return matcher.group(1);
+            }
+        }
+
+        return null;
+
+    }
+
+    private String youTubeLinkWithoutProtocolAndDomain(String url) {
+        Pattern compiledPattern = Pattern.compile(youTubeUrlRegEx);
+        Matcher matcher = compiledPattern.matcher(url);
+
+        if(matcher.find()){
+            return url.replace(matcher.group(), "");
+        }
+        return url;
     }
 
     // total number of rows
@@ -82,7 +148,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         TextView txtTime;
         TextView txtDescription;
         ImageView img;
-        VideoView video;
+        WebView video;
         LinearLayout multimediaFrame;
         TextView txtLikes;
         TextView txtDislikes;

@@ -7,12 +7,14 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -27,10 +29,12 @@ import ec.tec.ami.model.Post;
 import ec.tec.ami.model.User;
 import ec.tec.ami.views.activities.PostActivity;
 import ec.tec.ami.views.adapters.PostAdapter;
+
 import ec.tec.ami.views.utils.PaginationListener;
 
 import static ec.tec.ami.views.utils.PaginationListener.PAGE_START;
 import static ec.tec.ami.views.utils.PaginationListener.PAGE_SIZE;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,6 +43,7 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private EditText txtNewPost;
     private View view;
+
     private RecyclerView recyclerPosts;
     private SwipeRefreshLayout lytRefresh;
     private PostAdapter postAdapter;
@@ -53,6 +58,10 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private PostCursor cursor;
 
+    private RecyclerView listaPosts;
+    private LinearLayoutManager mLayoutManager;
+
+
     public TimeLineFragment() {
         // Required empty public constructor
     }
@@ -61,6 +70,9 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_time_line, container, false);
+        listaPosts = view.findViewById(R.id.timeline_recycler_view);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        listaPosts.setLayoutManager(mLayoutManager);
         txtNewPost = view.findViewById(R.id.txtNewPost);
         recyclerPosts = view.findViewById(R.id.recyclerPosts);
         lytRefresh = view.findViewById(R.id.lytRefresh);
@@ -80,10 +92,19 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
         lytRefresh.setOnRefreshListener(this);
         recyclerPosts.addOnScrollListener(new PaginationListener(linearLayoutManager) {
             @Override
+
             protected void loadMoreItems() {
                 isLoading = true;
                 currentPage++;
                 cursor.next();
+
+            public void onDataFetched(List<Post> posts) {
+                System.out.println("aaaa");
+                Toast.makeText(getContext(),"Posts",Toast.LENGTH_LONG).show();
+
+                PostAdapter adapter = new PostAdapter(getContext(),posts);
+                listaPosts.setAdapter(adapter);
+
             }
 
             @Override
