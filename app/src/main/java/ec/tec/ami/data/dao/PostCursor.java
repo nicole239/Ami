@@ -14,6 +14,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import ec.tec.ami.model.Post;
 
 public class PostCursor {
 
-    private static int fetchSize = 10;
+    private int fetchSize = 10;
     private List<String> friends;
     private int lastItem;
     private long lastDate = -1l;
@@ -31,12 +32,14 @@ public class PostCursor {
     private String laskKey;
     private PostEvent event;
     private FirebaseDatabase database;
+    private boolean empty = false;
     Object lock = new Object();
 
     public PostCursor(List<String> friends, String userEmail, int count) {
         this.friends = friends;
         this.userEmail = userEmail;
         this.count = count;
+        this.fetchSize = count;
         init();
     }
 
@@ -45,14 +48,14 @@ public class PostCursor {
     }
 
     public boolean isValid(Post post){
-        if(post.getUser().equals(userEmail)){
-            return true;
-        }
-        for(String friend : friends){
-            if(post.getUser().equals(friend)){
-                return true;
-            }
-        }
+//        if(post.getUser().equals(userEmail)){
+//            return true;
+//        }
+//        for(String friend : friends){
+//            if(post.getUser().equals(friend)){
+//                return true;
+//            }
+//        }
         return true;
     }
 
@@ -67,15 +70,19 @@ public class PostCursor {
     private class PostFetcher extends AsyncTask <Void,Void,List<Post>>{
         @Override
         protected List<Post> doInBackground(Void... voids) {
+
+
             final List<Post> posts = new ArrayList<>();
             DatabaseReference reference = database.getReference().child("posts");
             synchronized (lock){
                 while (itemsFetched < count){
+                    final boolean[] first = {true};
+                    final String key = laskKey;
                     Query query = null;
                     if(lastDate == -1l) {
                         query = reference.orderByChild("date/time").limitToLast(fetchSize);
                     }else{
-                        query = reference.orderByChild("date/time").equalTo((double)lastDate).limitToLast(fetchSize);
+                        query = reference.orderByChild("date/time").endAt((double)lastDate).limitToLast(fetchSize - itemsFetched + 1);
                     }
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -83,16 +90,20 @@ public class PostCursor {
                             synchronized (lock){
                                 if(dataSnapshot.getChildrenCount()>0){
                                     for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                        if(!snapshot.getKey().equals(laskKey)){
+                                        if(!snapshot.getKey().equals(key)){
                                             Post post = snapshot.getValue(Post.class);
-                                            lastDate = post.getDate().getTime();
-                                            laskKey = snapshot.getKey();
+                                            if(first[0]) {
+                                                lastDate = post.getDate().getTime();
+                                                laskKey = snapshot.getKey();
+                                                first[0] = false;
+                                            }
                                             if(isValid(post)){
                                                 posts.add(post);
                                                 itemsFetched++;
                                             }
                                         }else{
                                             if(dataSnapshot.getChildrenCount()==1){
+                                                empty = true;
                                                 itemsFetched = count + 1;
                                             }
                                         }
@@ -100,6 +111,7 @@ public class PostCursor {
                                     }
                                     lock.notify();
                                 }else{
+                                    empty = true;
                                     itemsFetched = count + 1;
                                     lock.notify();
                                 }
@@ -126,7 +138,12 @@ public class PostCursor {
 
         @Override
         protected void onPostExecute(List<Post> posts) {
-            event.onDataFetched(posts);
+            itemsFetched = 0;
+            if(empty && posts.size() == 0){
+                event.onEmptyData();
+                empty = false;
+            }else
+                event.onDataFetched(posts);
         }
     }
 

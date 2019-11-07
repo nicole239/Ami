@@ -18,6 +18,7 @@ import java.util.List;
 
 import ec.tec.ami.R;
 import ec.tec.ami.model.Post;
+import ec.tec.ami.model.Type;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
@@ -51,20 +52,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.txtDescription.setText(post.getDescription());
         //TODO: DISTINGUIR VIDEO/IMAGEN EN POST
 
-        if(post.getMedia() != null){
+        if(post.getMedia() != null && !post.getMedia().isEmpty()){
             holder.multimediaFrame.setVisibility(View.VISIBLE);
-            //if(ES IMAGEN){
+            if(post.getType()== Type.PHOTO){
                 //TODO: MOSTRAR IMAGEN
                 holder.img.setVisibility(View.VISIBLE);
-            //}else{
+            }else if (post.getType() == Type.VIDEO){
                 //TODO: MOSTRAR VIDEO EN YOUTUBE
                 holder.video.setVisibility(View.VISIBLE);
-            //}
+            }
         }
         holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
         holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
-        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
-        holder.listComments.setAdapter(adapter);
+//        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
+//        holder.listComments.setAdapter(adapter);
     }
 
     // total number of rows
@@ -101,6 +102,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             imgComments = itemView.findViewById(R.id.lblPostComments);
             listComments = itemView.findViewById(R.id.listPostComments);
             multimediaFrame = itemView.findViewById(R.id.frameMultimedia);
+            multimediaFrame.setVisibility(View.GONE);
 
             itemView.setOnClickListener(this);
 
@@ -130,6 +132,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     // allows clicks events to be caught
     void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
+    }
+
+    public void clear(){
+        mData.clear();
+        notifyDataSetChanged();
     }
 
     // parent activity will implement this method to respond to click events
