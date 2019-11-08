@@ -26,6 +26,7 @@ import ec.tec.ami.data.dao.PostCursor;
 import ec.tec.ami.data.dao.UserDAO;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.Post;
+import ec.tec.ami.model.Type;
 import ec.tec.ami.model.User;
 import ec.tec.ami.views.activities.PostActivity;
 import ec.tec.ami.views.adapters.PostAdapter;
@@ -58,8 +59,6 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private PostCursor cursor;
 
-    private RecyclerView listaPosts;
-    private LinearLayoutManager mLayoutManager;
 
 
     public TimeLineFragment() {
@@ -70,9 +69,7 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_time_line, container, false);
-        listaPosts = view.findViewById(R.id.timeline_recycler_view);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        listaPosts.setLayoutManager(mLayoutManager);
+
         txtNewPost = view.findViewById(R.id.txtNewPost);
         recyclerPosts = view.findViewById(R.id.recyclerPosts);
         lytRefresh = view.findViewById(R.id.lytRefresh);
@@ -87,24 +84,17 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
                 newPost();
             }
         });
-
+//        if(post.getType()== Type.PHOTO){
 
         lytRefresh.setOnRefreshListener(this);
         recyclerPosts.addOnScrollListener(new PaginationListener(linearLayoutManager) {
             @Override
 
             protected void loadMoreItems() {
+                lytRefresh.setRefreshing(true);
                 isLoading = true;
                 currentPage++;
                 cursor.next();
-
-            public void onDataFetched(List<Post> posts) {
-                System.out.println("aaaa");
-                Toast.makeText(getContext(),"Posts",Toast.LENGTH_LONG).show();
-
-                PostAdapter adapter = new PostAdapter(getContext(),posts);
-                listaPosts.setAdapter(adapter);
-
             }
 
             @Override
@@ -139,10 +129,12 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
                 cursor.setEvent(new PostCursor.PostEvent() {
                     @Override
                     public void onDataFetched(List<Post> posts) {
-                        itemCount += posts.size();
+                        lytRefresh.setRefreshing(false);
+                        isLoading = false;
+
                         for(int i=posts.size()-1;i>=0;i--){
                             TimeLineFragment.this.posts.add(posts.get(i));
-                            postAdapter.notifyItemInserted(TimeLineFragment.this.posts.size()-1);
+                            postAdapter.notifyItemInserted(itemCount++);
                         }
                     }
 
@@ -153,11 +145,14 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
                     @Override
                     public void onEmptyData() {
+                        lytRefresh.setRefreshing(false);
                         isLastPage = true;
                         isLoading =false;
                     }
                 });
-//                cursor.next();
+                cursor.next();
+                currentPage++;
+                isLoading = true;
             }
         });
 
@@ -169,5 +164,6 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
         currentPage = PAGE_START;
         isLastPage = false;
         postAdapter.clear();
+        newCursor();
     }
 }

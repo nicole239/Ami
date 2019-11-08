@@ -126,24 +126,24 @@ public class UserDAO {
     }
 
     public void getUser(String email, final UserEvent event){
-        DatabaseReference reference = database.getReference().child("users");
-        Query query = reference.orderByChild("email").equalTo(email);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        final User user = new User();
+        user.setEmail(email);
+        DatabaseReference reference = database.getReference().child("users/"+user.getID());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    for(DataSnapshot snapshot:dataSnapshot.getChildren()){
-                        event.onSuccess(snapshot.getValue(User.class));
-                    }
+//                    for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+                        User newUser = dataSnapshot.getValue(User.class);
+                        event.onSuccess(newUser);
+//                    }
 
-
-                }else{
-                    event.onFailure(new Exception("No data was found"));
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                event.onFailure(databaseError.toException());
+
             }
         });
     }

@@ -21,6 +21,8 @@ import org.jsoup.Jsoup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,13 +31,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ec.tec.ami.R;
+import ec.tec.ami.data.dao.UserDAO;
+import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.Post;
 import ec.tec.ami.model.Type;
+import ec.tec.ami.model.User;
+import ec.tec.ami.views.utils.ReadableDateFormat;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     private Context context;
     private List<Post> mData;
+    private Context mContext;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     final String youTubeUrlRegEx = "^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))/";
@@ -45,6 +52,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public PostAdapter(Context context, List<Post> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.mContext = context;
     }
 
     // inflates the row layout from xml when needed
@@ -61,49 +69,59 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         //TODO: MOSTRAR FOTO PERFIL
         //holder.imgUser.setImageBitmap(post.getUsuario().getImage());
+        holder.multimediaFrame.setVisibility(View.GONE);
         holder.txtName.setText(post.getUser());
-        holder.txtTime.setText(post.getDate().toString());
+        holder.txtTime.setText(ReadableDateFormat.toHumanFormat(post.getDate()));
         holder.txtDescription.setText(post.getDescription());
         //TODO: DISTINGUIR VIDEO/IMAGEN EN POST
-
-        if(post.getMedia() != null && !post.getMedia().isEmpty()){
+        if(post.getMedia() != null && post.getType() != Type.TEXT && !post.getMedia().isEmpty()){
             holder.multimediaFrame.setVisibility(View.VISIBLE);
-            if(post.getType()== Type.PHOTO){
             if(post.getType() == Type.PHOTO){
                 //TODO: MOSTRAR IMAGEN
                 holder.img.setVisibility(View.VISIBLE);
             }else if (post.getType() == Type.VIDEO){
-                //TODO: MOSTRAR VIDEO EN YOUTUBE
+                holder.video.getSettings().setJavaScriptEnabled(true);
+                holder.video.setWebChromeClient(new WebChromeClient(){
+
+                });
+                String videoID = urlToEmbeded(post.getMedia());
+
+                String urll = "https://www.youtube.com/embed/"+videoID;
+                holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
 
             }
         }
         holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
         holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
-//        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
-//        holder.listComments.setAdapter(adapter);
 
-                holder.video.getSettings().setJavaScriptEnabled(true);
-                holder.video.setWebChromeClient(new WebChromeClient(){
-
-                });/*
+                ;/*
                 if(post.getMedia()!=""){
                     String embed = "iframe width=\"100%\" height=\"100%\" src=\" post.getMedia()\"frameborder=\"0\" allowfullscreen></iframe>";
                     holder.video.loadData(embed, "text/html","utf-8");
                 }
 */
-                String videoID = urlToEmbeded(post.getMedia());
 
-                String urll = "https://www.youtube.com/embed/"+videoID;
-               holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
                 //holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/eWEF1Zrmdow\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
-                
-            }
 
-        }
+
+
+
         holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
         holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
-        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
-        holder.listComments.setAdapter(adapter);
+//        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
+//        holder.listComments.setAdapter(adapter);
+
+        UserDAO.getInstance().getUser(post.getUser(),new UserEvent(){
+            @Override
+            public void onSuccess(User user) {
+                if(user.getProfilePhoto()!= null && !user.getProfilePhoto().isEmpty()){
+                    Glide.with(mContext).load(user.getProfilePhoto()).into(holder.imgUser);
+                }else{
+                    holder.imgUser.setImageResource(R.drawable.default_perfil);
+                }
+                holder.txtName.setText(user.getName() + " "+user.getLastNameA());
+            }
+        });
     }
 
 
