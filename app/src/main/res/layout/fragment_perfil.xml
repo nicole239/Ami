@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
 
     tools:context=".views.fragments.PerfilFragment">
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/lytRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -15,31 +19,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+            <RelativeLayout
+                android:id="@+id/buttonArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/btnPerfilUpdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    android:text="Modificar"/>
 
-            <Button
-                android:id="@+id/btnPerfilUpdate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
-                android:text="Modificar"/>
+                <Button
+                    android:id="@+id/btnPerfilAddDelFriend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="Solicitud" />
+            </RelativeLayout>
 
-            <Button
-                android:id="@+id/btnPerfilAddDelFriend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:text="Solicitud" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgPerfilPicture"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
-                android:layout_below="@+id/btnPerfilUpdate"
+                android:layout_below="@+id/buttonArea"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/default_perfil" />
 
@@ -232,6 +241,6 @@
 
     </ScrollView>
 
-
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </FrameLayout>

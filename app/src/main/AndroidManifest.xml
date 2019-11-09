@@ -28,6 +28,9 @@
             android:name=".views.activities.EducationActivity"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
+            android:name=".views.activities.EditAccountActivity"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
             android:name=".views.activities.CreateAccountActivity"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
