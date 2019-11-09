@@ -101,6 +101,7 @@ public class PostCursor {
                                                 first[0] = false;
                                             }
                                             if(isValid(post)){
+                                                post.setId(snapshot.getKey());
                                                 posts.add(post);
                                                 itemsFetched++;
                                             }
