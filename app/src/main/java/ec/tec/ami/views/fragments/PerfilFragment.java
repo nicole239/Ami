@@ -125,8 +125,10 @@ public class PerfilFragment extends Fragment {
 
     private void setEducation(User user){
         List<String> items = new ArrayList<>();
-        for(Education edu : user.getEducation()){
-            items.add(edu.toString());
+        if(user.getEducation()!= null){
+            for(Education edu : user.getEducation()){
+                items.add(edu.toString());
+            }
         }
         ArrayAdapter<String> educationAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, items);
         listEducation.setAdapter(educationAdapter);

@@ -10,6 +10,7 @@ public class Post {
     private String user;
     private String description;
     private String media;
+    private String id;
     private Date date;
     private Type type;
     private List<String> likes;
@@ -126,5 +127,21 @@ public class Post {
         else{
             return 0;
         }
+    }
+
+    public String getId(){
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void addLike(String email){
+        this.likes.add(email);
+    }
+
+    public void addDislike(String email){
+        this.dislikes.add(email);
     }
 }
