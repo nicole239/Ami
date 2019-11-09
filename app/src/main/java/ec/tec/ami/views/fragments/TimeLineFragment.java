@@ -24,6 +24,10 @@ import java.util.List;
 import ec.tec.ami.R;
 import ec.tec.ami.data.dao.PostCursor;
 import ec.tec.ami.data.dao.UserDAO;
+import ec.tec.ami.data.dao.filter.FriendsFilter;
+import ec.tec.ami.data.dao.filter.PostFilter;
+import ec.tec.ami.data.dao.filter.UserFilter;
+import ec.tec.ami.data.dao.filter.WordFilter;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.Post;
 import ec.tec.ami.model.Type;
@@ -68,8 +72,10 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if(view != null){
+            return  view;
+        }
         view = inflater.inflate(R.layout.fragment_time_line, container, false);
-
         txtNewPost = view.findViewById(R.id.txtNewPost);
         recyclerPosts = view.findViewById(R.id.recyclerPosts);
         lytRefresh = view.findViewById(R.id.lytRefresh);
@@ -132,8 +138,12 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
                         lytRefresh.setRefreshing(false);
                         isLoading = false;
 
-                        for(int i=posts.size()-1;i>=0;i--){
-                            TimeLineFragment.this.posts.add(posts.get(i));
+//                        for(int i=posts.size()-1;i>=0;i--){
+//                            TimeLineFragment.this.posts.add(posts.get(i));
+//                            postAdapter.notifyItemInserted(itemCount++);
+//                        }
+                        for(Post post : posts){
+                            TimeLineFragment.this.posts.add(post);
                             postAdapter.notifyItemInserted(itemCount++);
                         }
                     }
@@ -158,6 +168,8 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
         });
 
     }
+
+
 
     @Override
     public void onRefresh() {

@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import ec.tec.ami.data.dao.filter.Filter;
@@ -70,15 +71,20 @@ public class PostCursor {
         new PostFetcher().execute();
     }
 
+    public void setFilter(Filter filter) {
+        this.filter = filter;
+    }
+
     private class PostFetcher extends AsyncTask <Void,Void,List<Post>>{
         @Override
         protected List<Post> doInBackground(Void... voids) {
 
 
-            final List<Post> posts = new ArrayList<>();
+            final LinkedList<Post> posts = new LinkedList<>();
             DatabaseReference reference = database.getReference().child("posts");
             synchronized (lock){
                 while (itemsFetched < count){
+                    final LinkedList<Post> tmp = new LinkedList<>();
                     final boolean[] first = {true};
                     final String key = laskKey;
                     Query query = null;
@@ -102,7 +108,7 @@ public class PostCursor {
                                             }
                                             if(isValid(post)){
                                                 post.setId(snapshot.getKey());
-                                                posts.add(post);
+                                                tmp.addFirst(post);
                                                 itemsFetched++;
                                             }
                                         }else{
@@ -113,6 +119,7 @@ public class PostCursor {
                                         }
 
                                     }
+                                    posts.addAll(tmp);
                                     lock.notify();
                                 }else{
                                     empty = true;

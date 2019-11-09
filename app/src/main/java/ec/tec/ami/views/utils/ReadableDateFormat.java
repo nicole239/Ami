@@ -31,7 +31,7 @@ public class ReadableDateFormat {
         if(minutes >= 1 && minutes < 60){
             return String.format("%2dmin",minutes);
         }
-        if(hours>1 && hours < 24){
+        if(hours>=1 && hours < 24){
             return String.format("%2dh",hours);
         }
         SimpleDateFormat format = new SimpleDateFormat("dd MMMM yyyy HH:mm");

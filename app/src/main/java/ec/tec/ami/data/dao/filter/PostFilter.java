@@ -1,5 +1,6 @@
 package ec.tec.ami.data.dao.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ec.tec.ami.model.Post;
@@ -9,8 +10,8 @@ public class PostFilter implements Filter {
     private List<Filter> filters;
     private FilterType type;
 
-    public PostFilter(List<Filter> filters, FilterType type) {
-        this.filters = filters;
+    public PostFilter(FilterType type) {
+        this.filters = new ArrayList<>();
         this.type = type;
     }
 
