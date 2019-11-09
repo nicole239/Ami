@@ -143,4 +143,8 @@ public class User {
     public String getID(){
         return getEmail().replace(".","_").replace("@","_");
     }
+
+    public void addPost(Post post){
+        posts.add(post);
+    }
 }
