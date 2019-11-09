@@ -79,7 +79,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             if(post.getType() == Type.PHOTO){
                 //TODO: MOSTRAR IMAGEN
                 holder.img.setVisibility(View.VISIBLE);
+                holder.video.setVisibility(View.GONE);
+                Glide.with(mContext).load(post.getMedia()).into(holder.img);
             }else if (post.getType() == Type.VIDEO){
+                holder.img.setVisibility(View.GONE);
                 holder.video.getSettings().setJavaScriptEnabled(true);
                 holder.video.setWebChromeClient(new WebChromeClient(){
 
