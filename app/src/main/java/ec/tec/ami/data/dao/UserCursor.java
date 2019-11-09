@@ -10,38 +10,38 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import ec.tec.ami.data.dao.filter.Filter;
 import ec.tec.ami.model.Post;
+import ec.tec.ami.model.User;
 
-public class PostCursor {
+public class UserCursor {
 
     private int fetchSize = 10;
-    private List<String> friends;
-    private int lastItem;
-    private long lastDate = -1l;
+
+    private String lastEmail = "";
     private int count;
     private int itemsFetched;
     private String userEmail;
-    private String laskKey;
-    private PostEvent event;
+    private String lastKey;
+    private UserCursoEvent event;
     private FirebaseDatabase database;
     private boolean empty = false;
     private Filter filter;
+    private String regx;
+
     Object lock = new Object();
 
-    public PostCursor(List<String> friends, String userEmail, int count) {
-        this.friends = friends;
-        this.userEmail = userEmail;
+    public UserCursor(int count, String regx) {
         this.count = count;
         this.fetchSize = count;
+        this.regx = regx.toLowerCase();
+        this.regx = ".*"+ Pattern.quote(this.regx)+".*";
         init();
     }
 
@@ -49,43 +49,34 @@ public class PostCursor {
         database = FirebaseDatabase.getInstance();
     }
 
-    public boolean isValid(Post post){
-//        if(post.getUser().equals(userEmail)){
-//            return true;
-//        }
-//        for(String friend : friends){
-//            if(post.getUser().equals(friend)){
-//                return true;
-//            }
-//        }
-        return filter == null || filter.accept(post);
-//        return true;
+    public boolean isValid(User user){
+        return user.getName().toLowerCase().matches(regx) || user.getLastNameA().toLowerCase().matches(regx) || user.getLastNameB().toLowerCase().matches(regx);
     }
 
-    public void setEvent(PostEvent event) {
+    public void setEvent(UserCursoEvent event) {
         this.event = event;
     }
 
     public void next(){
-        new PostFetcher().execute();
+        new UserFetcher().execute();
     }
 
-    private class PostFetcher extends AsyncTask <Void,Void,List<Post>>{
+    private class UserFetcher extends AsyncTask <Void,Void,List<User>>{
         @Override
-        protected List<Post> doInBackground(Void... voids) {
+        protected List<User> doInBackground(Void... voids) {
 
 
-            final List<Post> posts = new ArrayList<>();
-            DatabaseReference reference = database.getReference().child("posts");
+            final List<User> posts = new ArrayList<>();
+            DatabaseReference reference = database.getReference().child("users");
             synchronized (lock){
                 while (itemsFetched < count){
                     final boolean[] first = {true};
-                    final String key = laskKey;
+                    final String key = lastKey;
                     Query query = null;
-                    if(lastDate == -1l) {
-                        query = reference.orderByChild("date/time").limitToLast(fetchSize);
+                    if(lastEmail.isEmpty()) {
+                        query = reference.orderByChild("lastNameA").limitToLast(fetchSize);
                     }else{
-                        query = reference.orderByChild("date/time").endAt((double)lastDate).limitToLast(fetchSize - itemsFetched + 1);
+                        query = reference.orderByChild("lastNameA").endAt(lastEmail).limitToLast(fetchSize - itemsFetched + 1);
                     }
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -94,14 +85,14 @@ public class PostCursor {
                                 if(dataSnapshot.getChildrenCount()>0){
                                     for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                                         if(!snapshot.getKey().equals(key)){
-                                            Post post = snapshot.getValue(Post.class);
+                                            User user = snapshot.getValue(User.class);
                                             if(first[0]) {
-                                                lastDate = post.getDate().getTime();
-                                                laskKey = snapshot.getKey();
+                                                lastEmail = user.getLastNameA();
+                                                lastKey = snapshot.getKey();
                                                 first[0] = false;
                                             }
-                                            if(isValid(post)){
-                                                posts.add(post);
+                                            if(isValid(user)){
+                                                posts.add(user);
                                                 itemsFetched++;
                                             }
                                         }else{
@@ -140,18 +131,18 @@ public class PostCursor {
         }
 
         @Override
-        protected void onPostExecute(List<Post> posts) {
+        protected void onPostExecute(List<User> users) {
             itemsFetched = 0;
-            if(empty && posts.size() == 0){
+            if(empty && users.size() == 0){
                 event.onEmptyData();
                 empty = false;
             }else
-                event.onDataFetched(posts);
+                event.onDataFetched(users);
         }
     }
 
-    public interface PostEvent{
-        void onDataFetched(List<Post> posts);
+    public interface UserCursoEvent {
+        void onDataFetched(List<User> users);
         void onFailure(Exception e);
         void onEmptyData();
     }

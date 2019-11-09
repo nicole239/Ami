@@ -20,7 +20,7 @@ import ec.tec.ami.R;
 import ec.tec.ami.data.dao.UserDAO;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.User;
-import ec.tec.ami.views.adapters.FriendsAdapter;
+import ec.tec.ami.views.adapters.UserAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,10 +28,10 @@ import ec.tec.ami.views.adapters.FriendsAdapter;
 public class AmigosFragment extends Fragment {
 
     RecyclerView listFriends;
-    FriendsAdapter friendsAdapter;
+    UserAdapter friendsAdapter;
     RecyclerView recyclerView;
     List<User> friends = new ArrayList<>();
-    FriendsAdapter adapter;
+    UserAdapter adapter;
 
     public AmigosFragment() {
         // Required empty public constructor
@@ -43,7 +43,7 @@ public class AmigosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_amigos, container, false);
         listFriends = view.findViewById(R.id.listFriends);
         recyclerView = view.findViewById(R.id.listFriends);
-        adapter = new FriendsAdapter(getContext(),friends);
+        adapter = new UserAdapter(getContext(),friends);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

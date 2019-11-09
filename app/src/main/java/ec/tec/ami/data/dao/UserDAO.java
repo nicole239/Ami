@@ -108,8 +108,11 @@ public class UserDAO {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User friend = new User();
                 if(dataSnapshot.getChildrenCount()==0){
-                    friend.setEmail(dataSnapshot.getValue(String.class));
-                    friends.add(friend);
+                    if(dataSnapshot.exists()){
+                        friend.setEmail(dataSnapshot.getValue(String.class));
+                        friends.add(friend);
+                    }
+
                 }
                 for(DataSnapshot snapshot:dataSnapshot.getChildren()){
                     friend.setEmail(snapshot.getValue(String.class));

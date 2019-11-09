@@ -5,10 +5,58 @@
     android:layout_height="match_parent"
     tools:context=".views.fragments.BusquedaFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:padding="16dp">
+        <LinearLayout
+            android:id="@+id/searchArea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Spinner
+                android:id="@+id/spinnerType"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:spinnerMode="dropdown"
+                style="@style/SpinnerStyle"/>
+            <EditText
+                android:id="@+id/txtSearch"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:textColor="@color/colorPrimaryDark"
+                android:background="@color/colorGray"
+                android:hint="Search"
+                android:textSize="16sp" />
+            <Button
+                android:id="@+id/btnSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Search"
+                style="@style/DefaultButton4"/>
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/searchArea"
+            android:layout_marginTop="16dp">
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/lytRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
 
 </FrameLayout>

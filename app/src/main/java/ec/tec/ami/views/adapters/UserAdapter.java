@@ -19,24 +19,24 @@ import ec.tec.ami.data.dao.UserDAO;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.User;
 
-public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder>{
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     private Context context;
     private List<User> friends;
 
-    public FriendsAdapter(Context context, List<User> friends) {
+    public UserAdapter(Context context, List<User> friends) {
         this.context = context;
         this.friends = friends;
     }
 
     @NonNull
     @Override
-    public FriendsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public UserAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.friend_item,parent,false);
-        return new FriendsAdapter.ViewHolder(view);
+        return new UserAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final FriendsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final UserAdapter.ViewHolder holder, int position) {
         if(friends.get(position).getName() == null || friends.get(position).getName().isEmpty()){
             UserDAO.getInstance().getUser(friends.get(position).getEmail(),new UserEvent(){
                 @Override
@@ -54,11 +54,16 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
         return friends.size();
     }
 
-    private void loadContent(@NonNull FriendsAdapter.ViewHolder holder, User user){
+    private void loadContent(@NonNull UserAdapter.ViewHolder holder, User user){
         Glide.with(context)
                 .load(user.getProfilePhoto())
                 .into(holder.profile);
         holder.name.setText(user.getName() + " "+user.getLastNameA() + " "+user.getLastNameB());
+    }
+
+    public void clear(){
+        friends.clear();
+        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

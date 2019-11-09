@@ -152,6 +152,7 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
                 });
                 cursor.next();
                 currentPage++;
+                isLastPage = false;
                 isLoading = true;
             }
         });
