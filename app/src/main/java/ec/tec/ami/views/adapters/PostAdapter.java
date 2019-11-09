@@ -41,7 +41,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ec.tec.ami.R;
+import ec.tec.ami.data.dao.PostDAO;
 import ec.tec.ami.data.dao.UserDAO;
+import ec.tec.ami.data.event.PostEvent;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.Post;
 import ec.tec.ami.model.Type;
@@ -75,7 +77,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        Post post = mData.get(position);
+        final Post post = mData.get(position);
 
         //TODO: MOSTRAR FOTO PERFIL
         //holder.imgUser.setImageBitmap(post.getUsuario().getImage());
@@ -83,11 +85,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.txtName.setText(post.getUser());
         holder.txtTime.setText(ReadableDateFormat.toHumanFormat(post.getDate()));
         holder.txtDescription.setText(post.getDescription());
-        //TODO: DISTINGUIR VIDEO/IMAGEN EN POST
         if(post.getMedia() != null && post.getType() != Type.TEXT && !post.getMedia().isEmpty()){
             holder.multimediaFrame.setVisibility(View.VISIBLE);
             if(post.getType() == Type.PHOTO){
-                //TODO: MOSTRAR IMAGEN
                 holder.img.setVisibility(View.VISIBLE);
                 holder.video.setVisibility(View.GONE);
                 Glide.with(mContext).load(post.getMedia()).into(holder.img);
@@ -111,77 +111,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void onClick(final View view) {
 
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                final DatabaseReference reference = database.getReference().child("posts").child(mData.get(position).getId()).child("totalLikes");
-
-                reference.addValueEventListener(new ValueEventListener() {
+                PostDAO.getInstance().likePost(mData.get(position),new PostEvent(){
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.getChildrenCount()>0){
-                            List<String> td = (ArrayList<String>) dataSnapshot.getValue();
-                            mData.get(position).setLikes(td);
-                            for(int i=0; i<td.size();i++){
-                                Log.d("Likes", td.get(i));
-                            }
-
-                            if(mData.get(position).getLikes().contains(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
-                                Toast.makeText(view.getContext(), "Ya le di like", Toast.LENGTH_LONG).show();
-                            }
-                            else{
-                                mData.get(position).addLike(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                                reference.setValue(mData.get(position).getLikes())
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(view.getContext(), "Likes has beed added", Toast.LENGTH_LONG).show();
-
-                                                } else {
-                                                    Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
-
-                                                }
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(view.getContext(), "Failure on addind likes", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                            }
-
-                        }
-                        else{
-                            mData.get(position).setLikes(new ArrayList<String>());
-                            mData.get(position).addLike(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                            reference.setValue(mData.get(position).getLikes())
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Toast.makeText(view.getContext(), "Likes has beed added", Toast.LENGTH_LONG).show();
-
-                                            } else {
-                                                Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
-
-                                            }
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(view.getContext(), "Failure on addind likes", Toast.LENGTH_LONG).show();
-                                        }
-                                    });
+                    public void onSuccess(boolean status) {
+                        if(status){
+                            Toast.makeText(view.getContext(), "Likes has beed added", Toast.LENGTH_LONG).show();
+                            holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
+                        }else {
+                            Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onRepeated() {
+                        Toast.makeText(view.getContext(), "Ya le di like", Toast.LENGTH_LONG).show();
+                    }
 
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(view.getContext(), "Failure on addind likes", Toast.LENGTH_LONG).show();
                     }
                 });
-
             }
         });
 
@@ -189,80 +139,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.labelDislikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                final DatabaseReference reference = database.getReference().child("posts").child(mData.get(position).getId()).child("totalDislikes");
-
-                reference.addValueEventListener(new ValueEventListener() {
+                PostDAO.getInstance().dislikePost(post,new PostEvent(){
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        if(dataSnapshot.getChildrenCount()>0){
-                            List<String> td = (ArrayList<String>) dataSnapshot.getValue();
-                            mData.get(position).setDislikes(td);
-                            for(int i=0; i<td.size();i++){
-                                Log.d("Dislikes", td.get(i));
-                            }
-
-                            if(mData.get(position).getDislikes().contains(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
-                                Toast.makeText(view.getContext(), "Ya le di dislike", Toast.LENGTH_LONG).show();
-                            }
-                            else{
-                                mData.get(position).addDislike(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                                reference.setValue(mData.get(position).getDislikes())
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(view.getContext(), "Disikes has beed added", Toast.LENGTH_LONG).show();
-
-                                                } else {
-                                                    Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
-
-                                                }
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(view.getContext(), "Failure on addind dislikes", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                            }
-
-                        }
-                        else{
-                            mData.get(position).setDislikes(new ArrayList<String>());
-                            mData.get(position).addDislike(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                            reference.setValue(mData.get(position).getDislikes())
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Toast.makeText(view.getContext(), "Disikes has beed added", Toast.LENGTH_LONG).show();
-
-                                            } else {
-                                                Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
-
-                                            }
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(view.getContext(), "Failure on addind dislikes", Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                        }
-
+                    public void onRepeated() {
+                        Toast.makeText(view.getContext(), "Ya le di dislike", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onSuccess(boolean status) {
+                        if(status){
+                            Toast.makeText(view.getContext(), "Disikes has beed added", Toast.LENGTH_LONG).show();
+                            holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+                        }else {
+                            Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(view.getContext(), "Failure on addind likes", Toast.LENGTH_LONG).show();
                     }
                 });
-
             }
         });
 
