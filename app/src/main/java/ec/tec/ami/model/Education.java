@@ -1,6 +1,8 @@
 package ec.tec.ami.model;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Education implements Serializable {
@@ -32,6 +34,7 @@ public class Education implements Serializable {
 
     @Override
     public String toString() {
-        return  date + " - " + institute;
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        return  df.format(date) + " - " + institute;
     }
 }

@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="0dp"
+                android:layout_marginEnd="20dp"
                 android:text="Solicitud" />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -41,7 +41,6 @@
                 android:layout_height="250dp"
                 android:layout_below="@+id/btnPerfilUpdate"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
                 android:background="@drawable/default_perfil" />
 
             <TextView
@@ -208,18 +207,18 @@
                 android:layout_marginStart="20dp"
                 android:text="Fotos"/>
 
-            <in.goodiebag.carouselpicker.CarouselPicker
-                android:id="@+id/carouselPerfil"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/lblPerfilFotos" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/photoGallery"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/lblPerfilFotos" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listPerfilPosts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/carouselPerfil"/>
+                android:layout_below="@id/photoGallery" />
 
             <Button
                 android:layout_width="wrap_content"
