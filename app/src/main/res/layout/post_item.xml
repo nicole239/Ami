@@ -153,6 +153,7 @@
 
         <ListView
             android:layout_below="@id/layout_comment_user"
+            android:visibility="gone"
             android:layout_marginTop="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
