@@ -1,5 +1,6 @@
 package ec.tec.ami.views.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -93,20 +96,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Glide.with(mContext).load(post.getMedia()).into(holder.img);
             }else if (post.getType() == Type.VIDEO){
                 holder.img.setVisibility(View.GONE);
-                holder.video.getSettings().setJavaScriptEnabled(true);
-                holder.video.setWebChromeClient(new WebChromeClient(){
-
-                });
-                String videoID = urlToEmbeded(post.getMedia());
-
+                //String videoID = urlToEmbeded(post.getMedia());
+                String videoID = "aatr_2MstrI";
                 String urll = "https://www.youtube.com/embed/"+videoID;
-                holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
+                //holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
+                holder.video.loadDataWithBaseURL(null,"<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8",null);
 
+                Log.d("Video", urll);
             }
         }
-        holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
-        holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+        if(post.checkUserLike(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+            String hola = String.valueOf(post.getTotalLikes());
+            holder.txtLikes.setText(hola+" You liked this ");
+        }
+        else{
+            holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
+        }
 
+        if(post.checkUserDislike(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+            String dislikes = String.valueOf(post.getTotalDislikes());
+            holder.txtDislikes.setText(dislikes + "You disliked this");
+        }
+        else{
+            holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+        }
+        
         holder.labelLikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -177,8 +191,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
 
 
-        holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
-        holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+        //holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
+        //holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
 //        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
 //        holder.listComments.setAdapter(adapter);
 
@@ -246,6 +260,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         ImageView labelLikes;
         ImageView labelDislikes;
 
+        @SuppressLint("SetJavaScriptEnabled")
         ViewHolder(final View itemView) {
             super(itemView);
             imgUser = itemView.findViewById(R.id.imgPostUser);
@@ -262,6 +277,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             labelDislikes = itemView.findViewById(R.id.lblDislikes);
             multimediaFrame = itemView.findViewById(R.id.frameMultimedia);
             multimediaFrame.setVisibility(View.GONE);
+
+            video.setWebViewClient(new WebViewClient());
+            video.setWebChromeClient(new WebChromeClient());
+            video.getSettings().setJavaScriptEnabled(true);
+            video.getSettings().setDomStorageEnabled(true);
+
 
             itemView.setOnClickListener(this);
 

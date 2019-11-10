@@ -177,6 +177,7 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
         currentPage = PAGE_START;
         isLastPage = false;
         postAdapter.clear();
+        postAdapter.notifyDataSetChanged();
         newCursor();
     }
 }
