@@ -131,12 +131,32 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void onClick(final View view) {
 
+
+
                 PostDAO.getInstance().likePost(mData.get(position),new PostEvent(){
                     @Override
                     public void onSuccess(boolean status) {
                         if(status){
                             Toast.makeText(view.getContext(), "Likes has beed added", Toast.LENGTH_LONG).show();
-                            holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
+                            holder.txtLikes.setText(post.getTotalLikes()+" You liked this");
+
+                            PostDAO.getInstance().deleteDislike(FirebaseAuth.getInstance().getCurrentUser().getEmail(),mData.get(position),new PostEvent(){
+                                @Override
+                                public void onSuccess(boolean status) {
+                                    if(status){
+                                        if(post.getDislikes().size()>0){
+                                            post.getDislikes().remove(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                                            holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    super.onFailure(e);
+                                }
+                            });
+
                         }else {
                             Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
                         }
@@ -169,7 +189,25 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     public void onSuccess(boolean status) {
                         if(status){
                             Toast.makeText(view.getContext(), "Disikes has beed added", Toast.LENGTH_LONG).show();
-                            holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+                            holder.txtDislikes.setText(post.getTotalDislikes()+" You dislike this");
+
+                            PostDAO.getInstance().deleteLike(FirebaseAuth.getInstance().getCurrentUser().getEmail(),mData.get(position), new PostEvent(){
+                                @Override
+                                public void onSuccess(boolean status) {
+                                    if(status){
+                                        if(post.getLikes().size()>0){
+                                            post.getLikes().remove(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                                            holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    super.onFailure(e);
+                                }
+                            });
+
                         }else {
                             Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
                         }
