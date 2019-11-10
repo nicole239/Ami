@@ -15,11 +15,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +38,7 @@ import ec.tec.ami.data.dao.PostDAO;
 import ec.tec.ami.data.dao.UserDAO;
 import ec.tec.ami.data.event.PostEvent;
 import ec.tec.ami.data.event.UserEvent;
+import ec.tec.ami.model.Comment;
 import ec.tec.ami.model.Post;
 import ec.tec.ami.model.Type;
 import ec.tec.ami.model.User;
@@ -188,6 +198,84 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 //        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
 //        holder.listComments.setAdapter(adapter);
 
+        holder.imgComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(holder.listComments.getVisibility() == View.VISIBLE) {
+                    holder.listComments.setVisibility(View.GONE);
+                    holder.layoutComment.setVisibility(View.GONE);
+                    Log.d("hola", "entre");
+
+                }
+                else {
+                    holder.listComments.setVisibility(View.VISIBLE);
+                    holder.layoutComment.setVisibility(View.VISIBLE);
+                    FirebaseDatabase firebaseDatabasee = FirebaseDatabase.getInstance();
+                    DatabaseReference reference = firebaseDatabasee.getReference().child("posts").child(post.getId()).child("comentarios");
+
+                    reference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            List<Comment> comments = new ArrayList<Comment>();
+                            for (DataSnapshot child : dataSnapshot.getChildren()){
+                                comments.add(child.getValue(Comment.class));
+                            }
+                            Log.d("hola", "numero es: "+comments.size());
+
+                            for(int i=0; i<comments.size();i++){
+                                Log.d("hola",comments.get(i).getComment());
+                            }
+
+                            CommentAdapter adapter = new CommentAdapter(mContext, comments);
+                            holder.listComments.setAdapter(adapter);
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                Toast.makeText(mContext,"numero de coments: "+post.getComments().size(),Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        holder.userCommentSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserDAO.getInstance().getUser(FirebaseAuth.getInstance().getCurrentUser().getEmail(), new UserEvent(){
+
+                    @Override
+                    public void onSuccess(User user) {
+                        String detalle = holder.userCommentDetail.getText().toString();
+                        Date date = Calendar.getInstance().getTime();
+                        Comment comment = new Comment(user, date,detalle);
+                        String id = post.getId();
+
+                        PostDAO.getInstance().addComment(id,comment,new PostEvent(){
+                            @Override
+                            public void onSuccess(boolean status) {
+                                if(status){
+                                    Toast.makeText(mContext,"Added Comment",Toast.LENGTH_LONG).show();
+                                }
+                                else{
+                                    Toast.makeText(mContext,"something went wrong",Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                Toast.makeText(mContext,"Failure to add comment",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
         UserDAO.getInstance().getUser(post.getUser(),new UserEvent(){
             @Override
             public void onSuccess(User user) {
@@ -251,6 +339,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         ListView listComments;
         ImageView labelLikes;
         ImageView labelDislikes;
+        
 
         @SuppressLint("SetJavaScriptEnabled")
         ViewHolder(final View itemView) {
