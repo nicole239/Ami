@@ -369,6 +369,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             labelDislikes = itemView.findViewById(R.id.lblDislikes);
             multimediaFrame = itemView.findViewById(R.id.frameMultimedia);
             multimediaFrame.setVisibility(View.GONE);
+            layoutComment = itemView.findViewById(R.id.layout_comment_user);
+            userCommentNameTxt = itemView.findViewById(R.id.userTxtCommentName);
+            userCommentDetail = itemView.findViewById(R.id.userCommentEditText);
+            userCommentSend = itemView.findViewById(R.id.userComentarioSendBtn);
+            layoutComment.setVisibility(View.GONE);
 
             video.setWebViewClient(new WebViewClient());
             video.setWebChromeClient(new WebChromeClient());
