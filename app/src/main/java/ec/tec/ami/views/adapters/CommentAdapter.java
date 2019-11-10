@@ -32,10 +32,10 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.comment_item, parent, false);
         }
         // Lookup view for data population
-        TextView txtName = (TextView) convertView.findViewById(R.id.txtCommentName);
+        TextView txtName = (TextView) convertView.findViewById(R.id.userTxtCommentName);
         TextView txtTime = (TextView) convertView.findViewById(R.id.txtCommentDate);
         TextView txtComment = (TextView) convertView.findViewById(R.id.txtComment);
-        ImageView imgView = (ImageView) convertView.findViewById(R.id.imgComment);
+        ImageView imgView = (ImageView) convertView.findViewById(R.id.userImgComment);
         // Populate the data into the template view using the data object
         txtName.setText(comment.getUser().getName());
         txtTime.setText(comment.getDate().toString());

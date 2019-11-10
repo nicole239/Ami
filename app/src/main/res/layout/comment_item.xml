@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background_outline">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imgComment"
+        android:id="@+id/userImgComment"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
@@ -12,12 +13,12 @@
         android:src="@drawable/default_perfil" />
 
     <TextView
-        android:id="@+id/txtCommentName"
+        android:id="@+id/userTxtCommentName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/imgComment"
+        android:layout_alignTop="@id/userImgComment"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@id/imgComment"
+        android:layout_toEndOf="@id/userImgComment"
         android:text="Nombre"
         android:textSize="18sp" />
 
@@ -25,9 +26,9 @@
         android:id="@+id/txtCommentDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/imgComment"
+        android:layout_alignBottom="@id/userImgComment"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@id/imgComment"
+        android:layout_toEndOf="@id/userImgComment"
         android:text="10/10/2019" />
 
     <TextView
@@ -36,7 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_below="@id/imgComment"
-        android:text="Comentario"/>
+        android:layout_below="@id/userImgComment"
+        android:text="Comentario"
+        android:padding="15dp"/>
 
 </RelativeLayout>

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ec.tec.ami.data.event.PostEvent;
+import ec.tec.ami.model.Comment;
 import ec.tec.ami.model.Post;
 import ec.tec.ami.model.User;
 
@@ -38,6 +39,7 @@ public class PostDAO {
         }
         return postDAO;
     }
+
 
     public void addPost(final Post post, final PostEvent event){
         User user = new User();
@@ -60,6 +62,27 @@ public class PostDAO {
                 event.onFailure(e);
             }
         });
+    }
+
+    public void addComment(String postID, final Comment comment, final PostEvent event){
+
+        DatabaseReference reference = database.getReference().child("posts").child(postID).child("comentarios").push();
+        reference.setValue(comment).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    event.onSuccess(true);
+                }else{
+                    event.onFailure(task.getException());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                event.onFailure(e);
+            }
+        });
+
     }
 
     public void likePost(final Post post, final PostEvent event){
