@@ -9,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -93,14 +96,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Glide.with(mContext).load(post.getMedia()).into(holder.img);
             }else if (post.getType() == Type.VIDEO){
                 holder.img.setVisibility(View.GONE);
-                holder.video.getSettings().setJavaScriptEnabled(true);
-                holder.video.setWebChromeClient(new WebChromeClient(){
 
-                });
                 String videoID = urlToEmbeded(post.getMedia());
 
+                holder.video.loadUrl("about:blank");
                 String urll = "https://www.youtube.com/embed/"+videoID;
-                holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
+                holder.video.loadDataWithBaseURL(null,"<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\" frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8",null);
+                holder.video.measure(100,100);
+                holder.video.getSettings().setLoadWithOverviewMode(true);
 
             }
         }
@@ -238,7 +241,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         TextView txtDescription;
         ImageView img;
         WebView video;
-        LinearLayout multimediaFrame;
+        RelativeLayout multimediaFrame;
         TextView txtLikes;
         TextView txtDislikes;
         ImageView imgComments;
@@ -254,6 +257,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             txtDescription = itemView.findViewById(R.id.txtPostDescription);
             img = itemView.findViewById(R.id.imgPost);
             video = itemView.findViewById(R.id.videoPost);
+            video.getSettings().setJavaScriptEnabled(true);
+            video.setWebChromeClient(new WebChromeClient(){
+
+            });
+            video.getSettings().setDomStorageEnabled(true);
             txtLikes = itemView.findViewById(R.id.txtPostLikes);
             txtDislikes = itemView.findViewById(R.id.txtPostDislikes);
             imgComments = itemView.findViewById(R.id.lblPostComments);

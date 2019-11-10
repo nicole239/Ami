@@ -41,7 +41,7 @@
         android:layout_marginEnd="20dp"
         android:text="description"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/frameMultimedia"
         android:layout_width="match_parent"
         android:layout_height="250dp"
@@ -53,16 +53,16 @@
 
         <ImageView
             android:id="@+id/imgPost"
-            android:layout_below="@id/txtPostDescription"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <WebView
             android:id="@+id/videoPost"
-            android:layout_below="@id/txtPostDescription"
+
             android:layout_width="match_parent"
-            android:layout_height="180dp"/>
-    </LinearLayout>
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
 
 
     <ImageView

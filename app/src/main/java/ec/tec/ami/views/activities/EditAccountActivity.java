@@ -27,6 +27,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -70,11 +71,12 @@ public class EditAccountActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private FirebaseDatabase database;
     private FirebaseAuth auth;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_account);
+        setContentView(R.layout.activity_edit_account);
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
@@ -147,15 +149,40 @@ public class EditAccountActivity extends AppCompatActivity {
         txtTelephone = findViewById(R.id.txtTelephone);
 
         progressBar = findViewById(R.id.progress);
-
-        Intent intent = getIntent();
-        email = intent.getStringExtra("email");
-        password = intent.getStringExtra("password");
-        isGoogle = intent.getBooleanExtra("isGoogle",false);
-
         database = FirebaseDatabase.getInstance();
         reference = database.getReference().child("users");
         auth = FirebaseAuth.getInstance();
+        loadData();
+    }
+
+    private void loadData(){
+        Intent intent = getIntent();
+        user = (User)intent.getSerializableExtra("user");
+
+        txtName.setText(user.getName());
+        txtLastName.setText(user.getLastNameA());
+        txtLastName2.setText(user.getLastNameB());
+        txtCity.setText(user.getCity());
+        txtTelephone.setText(String.valueOf(user.getTelephone()));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(user.getBirthDay());
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        month = calendar.get(Calendar.MONTH);
+        year = calendar.get(Calendar.YEAR);
+        btnEducation.setText("Edit");
+        String format = "dd/MM/yyyy";
+        SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
+        txtBirthday.setText(formatter.format(user.getBirthDay()));
+        for(int i=0;i<spinnerGender.getAdapter().getCount();i++){
+            Object obj = spinnerGender.getAdapter().getItem(i);
+            if(obj.equals(user.getGender())){
+                spinnerGender.setSelection(i);
+            }
+        }
+        for(Education e : user.getEducation()){
+            this.education.add((Education) e.clone());
+        }
+        Glide.with(this).load(user.getProfilePhoto()).into(imgProfile);
     }
 
     private void selectEducation() {
@@ -201,14 +228,14 @@ public class EditAccountActivity extends AppCompatActivity {
         user.setCity(city);
         user.setTelephone(Integer.parseInt(telephone));
         user.setGender((String)spinnerGender.getSelectedItem());
-        user.setEmail(email);
+        user.setEmail(this.user.getEmail());
         user.setEducation(education);
 
         calendar.set(Calendar.YEAR,year);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.DAY_OF_MONTH,day);
         user.setBirthDay(calendar.getTime());
-
+        user.setFriends(this.user.getFriends());
         progressBar.setVisibility(View.VISIBLE);
         btnNext.setEnabled(false);
         registerInFireBase(user);
@@ -220,16 +247,20 @@ public class EditAccountActivity extends AppCompatActivity {
         ImageDAO.getInstance().uploadImage(uri,"profile/"+user.getID(),new ImageEvent(){
             @Override
             public void onSuccess(String link) {
-                user.setProfilePhoto(link);
+                if(link.isEmpty()){
+                    user.setProfilePhoto(EditAccountActivity.this.user.getProfilePhoto());
+                }else {
+                    user.setProfilePhoto(link);
+                }
                 reference.child(user.getID()).setValue(user)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(EditAccountActivity.this, "Account created", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(EditAccountActivity.this, "Account modified", Toast.LENGTH_LONG).show();
                                     finish();
                                 } else {
-                                    Toast.makeText(EditAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(EditAccountActivity.this, "The account couldn\'t be modified", Toast.LENGTH_LONG).show();
                                     enableButton();
                                 }
                             }
@@ -237,7 +268,7 @@ public class EditAccountActivity extends AppCompatActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(EditAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                                Toast.makeText(EditAccountActivity.this, "The account couldn\'t be modified", Toast.LENGTH_LONG).show();
                                 enableButton();
                             }
                         });
@@ -245,7 +276,7 @@ public class EditAccountActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String err) {
-                Toast.makeText(EditAccountActivity.this, "The account couldn\'t be created", Toast.LENGTH_LONG).show();
+                Toast.makeText(EditAccountActivity.this, "The account couldn\'t be modified", Toast.LENGTH_LONG).show();
                 enableButton();
             }
         });

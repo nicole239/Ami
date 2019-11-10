@@ -5,7 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Education implements Serializable {
+public class Education implements Serializable, Cloneable {
     private Date date;
     private String institute;
 
@@ -36,5 +36,13 @@ public class Education implements Serializable {
     public String toString() {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         return  df.format(date) + " - " + institute;
+    }
+
+    @Override
+    public Object clone() {
+        Education education = new Education();
+        education.setDate((Date)this.getDate().clone());
+        education.setInstitute(this.institute);
+        return education;
     }
 }

@@ -1,10 +1,11 @@
 package ec.tec.ami.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class User {
+public class User implements Serializable {
     private String name;
     private String lastNameA;
     private String lastNameB;

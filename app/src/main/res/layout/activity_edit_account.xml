@@ -31,7 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="@string/create_account_title"
+                    android:text="@string/edit_account_title"
                     android:textColor="#fff" />
             </RelativeLayout>
 
@@ -287,7 +287,7 @@
                     android:id="@+id/btnNext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Next"
+                    android:text="Save"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     style="@style/DefaultButton2"

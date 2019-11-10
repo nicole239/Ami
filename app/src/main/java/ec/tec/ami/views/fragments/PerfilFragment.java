@@ -70,6 +70,7 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private SwipeRefreshLayout lytRefresh;
 
+    Button btnPerfilUpdate;
 
     DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -113,17 +114,18 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
             }
         });
         Log.i("PERFIL_TAG","Iniciando busqueda de usuario...");
-        setCurrentUser();
 
-        Button btnPerfilUpdate = view.findViewById(R.id.btnPerfilUpdate);
+
+        btnPerfilUpdate = view.findViewById(R.id.btnPerfilUpdate);
         btnPerfilUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(PerfilFragment.this.getContext(), EditAccountActivity.class);
+                intent.putExtra("user",user);
                 startActivity(intent);
             }
         });
-
+        setCurrentUser();
 
         return view;
     }
@@ -192,6 +194,7 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     private void setCurrentUser(){
+        btnPerfilUpdate.setEnabled(false);
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         Log.i("PERFIL_TAG",email);
         UserDAO.getInstance().getUser(email, new UserEvent() {
@@ -199,6 +202,7 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
             public void onSuccess(User user){
                 Log.i("PERFIL_TAG",user.getName());
                 PerfilFragment.this.user = user;
+                btnPerfilUpdate.setEnabled(true);
                 setData(user);
                 loadPosts(user);
 
