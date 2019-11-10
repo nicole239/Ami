@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -339,6 +341,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         ListView listComments;
         ImageView labelLikes;
         ImageView labelDislikes;
+        RelativeLayout layoutComment;
+        TextView userCommentNameTxt;
+        EditText userCommentDetail;
+        Button userCommentSend;
         
 
         @SuppressLint("SetJavaScriptEnabled")
