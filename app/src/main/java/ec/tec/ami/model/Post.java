@@ -145,4 +145,23 @@ public class Post implements Serializable {
     public void addDislike(String email){
         this.dislikes.add(email);
     }
+
+    public boolean checkUserLike(String email){
+        if(this.likes!=null){
+            if(this.likes.contains(email)){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public boolean checkUserDislike(String email){
+        if(this.dislikes!=null){
+            if(this.dislikes.contains(email)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

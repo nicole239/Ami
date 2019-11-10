@@ -1,44 +1,25 @@
 package ec.tec.ami.views.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,6 +78,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }else if (post.getType() == Type.VIDEO){
                 holder.img.setVisibility(View.GONE);
 
+
                 String videoID = urlToEmbeded(post.getMedia());
 
                 holder.video.loadUrl("about:blank");
@@ -104,12 +86,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 holder.video.loadDataWithBaseURL(null,"<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\" frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8",null);
                 holder.video.measure(100,100);
                 holder.video.getSettings().setLoadWithOverviewMode(true);
+//=======
+//                //String videoID = urlToEmbeded(post.getMedia());
+//                String videoID = "aatr_2MstrI";
+//                String urll = "https://www.youtube.com/embed/"+videoID;
+//                //holder.video.loadData("<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8");
+//                holder.video.loadDataWithBaseURL(null,"<iframe width=\"100%\" height=\"100%\" src=\""+urll+"\"frameborder=\"0\" allowfullscreen></iframe>", "text/html","utf-8",null);
+//>>>>>>> 3166a8b483098b9b3105cf2413b691c536258721
 
+                Log.d("Video", urll);
             }
         }
-        holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
-        holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+        if(post.checkUserLike(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+            String hola = String.valueOf(post.getTotalLikes());
+            holder.txtLikes.setText(hola+" You liked this ");
+        }
+        else{
+            holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
+        }
 
+        if(post.checkUserDislike(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+            String dislikes = String.valueOf(post.getTotalDislikes());
+            holder.txtDislikes.setText(dislikes + "You disliked this");
+        }
+        else{
+            holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+        }
+        
         holder.labelLikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -180,8 +183,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
 
 
-        holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
-        holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
+        //holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
+        //holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
 //        CommentAdapter adapter = new CommentAdapter(context, post.getComments());
 //        holder.listComments.setAdapter(adapter);
 
@@ -249,6 +252,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         ImageView labelLikes;
         ImageView labelDislikes;
 
+        @SuppressLint("SetJavaScriptEnabled")
         ViewHolder(final View itemView) {
             super(itemView);
             imgUser = itemView.findViewById(R.id.imgPostUser);
@@ -270,6 +274,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             labelDislikes = itemView.findViewById(R.id.lblDislikes);
             multimediaFrame = itemView.findViewById(R.id.frameMultimedia);
             multimediaFrame.setVisibility(View.GONE);
+
+            video.setWebViewClient(new WebViewClient());
+            video.setWebChromeClient(new WebChromeClient());
+            video.getSettings().setJavaScriptEnabled(true);
+            video.getSettings().setDomStorageEnabled(true);
+
 
             itemView.setOnClickListener(this);
 
