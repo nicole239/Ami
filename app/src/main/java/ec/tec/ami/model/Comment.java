@@ -6,6 +6,12 @@ public class Comment {
     private Date date;
     private String comment;
 
+    public Comment(){
+        this.user=null;
+        this.date=null;
+        this.comment="";
+    }
+
     public Comment(User user, Date fecha, String comentario) {
         this.user = user;
         this.date = fecha;

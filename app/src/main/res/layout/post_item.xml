@@ -115,19 +115,59 @@
         android:layout_toEndOf="@id/txtPostDislikes"
         android:background="@drawable/ic_comment_24dp" />
 
-    <ScrollView
-        android:layout_below="@id/lblPostComments"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:id="@+id/layout_comment_user"
+        android:layout_below="@+id/lblPostComments"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="150dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userImgComment"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/default_perfil" />
+
+        <TextView
+            android:id="@+id/userTxtCommentName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/userImgComment"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/userImgComment"
+            android:text="Nombre"
+            android:layout_marginTop="10dp"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/userCommentEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_below="@id/userImgComment"
+            android:hint="Comentario"/>
+        <Button
+            android:id="@+id/userComentarioSendBtn"
+            android:layout_below="@+id/userCommentEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Send"></Button>
+
+    </RelativeLayout>
+
 
         <ListView
+            android:layout_below="@id/layout_comment_user"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:id="@+id/listPostComments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-    </ScrollView>
 
 
 
