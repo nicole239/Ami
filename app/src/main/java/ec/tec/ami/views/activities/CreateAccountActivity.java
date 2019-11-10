@@ -212,7 +212,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         btnNext.setEnabled(false);
         if(!isGoogle) {
-
+            user.setType(User.Type.EMAIL);
             auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -234,6 +234,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 }
             });
         }else{
+            user.setType(User.Type.GMAIL);
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
             user.setProfilePhoto(account.getPhotoUrl().toString());
             user.setEmail(account.getEmail());

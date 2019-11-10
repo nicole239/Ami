@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -20,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.internal.OnConnectionFailedListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -32,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import ec.tec.ami.R;
 import ec.tec.ami.data.dao.UserDAO;
 import ec.tec.ami.data.event.UserEvent;
+import ec.tec.ami.model.User;
 
 public class LoginActivity extends AppCompatActivity implements OnConnectionFailedListener {
 
@@ -42,6 +45,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     private Button btnGoogleLogin, btnSignIn, btnLogIn;
     private EditText txtEmail, txtPassword;
     private RelativeLayout layout;
+    private TextView tvForgot;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +81,26 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
         layout = findViewById(R.id.lytPlaceHolder);
+
+        tvForgot = findViewById(R.id.tvForgot);
+
+        tvForgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogInputValue dialogInputValue = new DialogInputValue(LoginActivity.this, "Recover account", new DialogInputValue.DialogResult() {
+                    @Override
+                    public void onDialogResponse(String value) {
+                        forgotPassword(value);
+                    }
+
+                    @Override
+                    public void onDismiss() {
+
+                    }
+                });
+                dialogInputValue.show();
+            }
+        });
     }
 
     @Override
@@ -137,7 +161,22 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             @Override
             public void onSuccess(boolean state){
                 if(state){
-                    signInWithGoogle(account);
+                    UserDAO.getInstance().getUserType(account.getEmail(),new UserEvent(){
+                        @Override
+                        public void onSuccess(User user) {
+                            if(user.getType() == User.Type.GMAIL){
+                                signInWithGoogle(account);
+                            }else{
+                                Toast.makeText(LoginActivity.this,"This email is already registered",Toast.LENGTH_SHORT).show();
+                                signOut();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            signOut();
+                        }
+                    });
                 }else if(register){
                     Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);
                     intent.putExtra("email", account.getEmail());
@@ -158,13 +197,17 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
             @Override
             public void onFailure(Exception e) {
-                GoogleSignIn.getClient(LoginActivity.this, signInOptions).signOut()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+               signOut();
+            }
+        });
+    }
 
-                    }
-                });
+    private void signOut(){
+        GoogleSignIn.getClient(LoginActivity.this, signInOptions).signOut()
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                layout.setVisibility(View.GONE);
             }
         });
     }
@@ -184,7 +227,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
             @Override
             public void onFailure(Exception e) {
-                Toast.makeText(LoginActivity.this,"Email or password incorrect",Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivity.this,"Email or password incorrect",Toast.LENGTH_LONG).show();
 			}
         });
     }
@@ -193,5 +236,25 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         finish();
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
+    }
+
+    private void forgotPassword(String email){
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(LoginActivity.this,"Email sent",Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(LoginActivity.this,"The email could not be sent",Toast.LENGTH_LONG).show();
+                }
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(LoginActivity.this,"The email could not be sent",Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

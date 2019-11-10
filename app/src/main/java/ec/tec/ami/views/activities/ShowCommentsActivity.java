@@ -89,6 +89,10 @@ public class ShowCommentsActivity extends AppCompatActivity {
                 user.setNotifications(null);
                 user.setEducation(null);
                 user.setPosts(null);
+                user.setTelephone(0);
+                user.setCity(null);
+                user.setGender(null);
+                user.setBirthDay(null);
                 String detalle = userCommentDetail.getText().toString();
                 Date date = Calendar.getInstance().getTime();
                 Comment comment = new Comment(user, date,detalle);

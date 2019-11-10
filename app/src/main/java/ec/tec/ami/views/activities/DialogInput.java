@@ -20,6 +20,7 @@ public class DialogInput extends Dialog {
     private Button btnOk, btnClose;
     private InputListener listener = null;
 
+
     public DialogInput(@NonNull Context context, String title) {
         super(context);
         setContentView(R.layout.dialog_input);

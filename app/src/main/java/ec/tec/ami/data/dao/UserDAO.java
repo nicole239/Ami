@@ -151,6 +151,31 @@ public class UserDAO {
         });
     }
 
+    public void getUserType(String email, final UserEvent event){
+        final User user = new User();
+        user.setEmail(email);
+        DatabaseReference reference = database.getReference().child("users/"+user.getID()+"/type");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    User.Type type = dataSnapshot.getValue(User.Type.class);
+                    User newUser = new User();
+                    newUser.setType(type);
+                    event.onSuccess(newUser);
+                }else{
+                    event.onFailure(new Exception("No data found"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                event.onFailure(databaseError.toException());
+            }
+        });
+
+    }
+
     public void getUserPhoto(String email, final UserEvent event){
         final User user = new User();
         user.setEmail(email);

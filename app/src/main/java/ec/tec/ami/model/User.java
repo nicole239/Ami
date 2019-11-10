@@ -19,6 +19,7 @@ public class User implements Serializable {
     private List<String> friends = new ArrayList<>();
     private List<Notification> notifications = new ArrayList<>();
     private List<Post> posts = new ArrayList<>();
+    private Type type;
 
     public static String[] GENDERS = {"Female", "Male","Non-binary","Queer","Other"};
 
@@ -147,5 +148,17 @@ public class User implements Serializable {
 
     public void addPost(Post post){
         posts.add(post);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public enum Type{
+        EMAIL, GMAIL;
     }
 }
