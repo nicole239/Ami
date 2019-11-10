@@ -2,6 +2,7 @@ package ec.tec.ami.views.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,7 @@ import ec.tec.ami.model.Comment;
 import ec.tec.ami.model.Post;
 import ec.tec.ami.model.Type;
 import ec.tec.ami.model.User;
+import ec.tec.ami.views.activities.ShowCommentsActivity;
 import ec.tec.ami.views.utils.ReadableDateFormat;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
@@ -203,42 +205,45 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.imgComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(holder.listComments.getVisibility() == View.VISIBLE) {
-                    holder.listComments.setVisibility(View.GONE);
-                    holder.layoutComment.setVisibility(View.GONE);
-                    Log.d("hola", "entre");
-
-                }
-                else {
-                    holder.listComments.setVisibility(View.VISIBLE);
-                    holder.layoutComment.setVisibility(View.VISIBLE);
-                    FirebaseDatabase firebaseDatabasee = FirebaseDatabase.getInstance();
-                    DatabaseReference reference = firebaseDatabasee.getReference().child("posts").child(post.getId()).child("comentarios");
-
-                    reference.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            List<Comment> comments = new ArrayList<Comment>();
-                            for (DataSnapshot child : dataSnapshot.getChildren()){
-                                comments.add(child.getValue(Comment.class));
-                            }
-                            Log.d("hola", "numero es: "+comments.size());
-
-                            for(int i=0; i<comments.size();i++){
-                                Log.d("hola",comments.get(i).getComment());
-                            }
-
-                            CommentAdapter adapter = new CommentAdapter(mContext, comments);
-                            holder.listComments.setAdapter(adapter);
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
+                Intent intent = new Intent(mContext, ShowCommentsActivity.class);
+                intent.putExtra("ID",post.getId());
+                mContext.startActivity(intent);
+//                if(holder.listComments.getVisibility() == View.VISIBLE) {
+//                    holder.listComments.setVisibility(View.GONE);
+//                    holder.layoutComment.setVisibility(View.GONE);
+//                    Log.d("hola", "entre");
+//
+//                }
+//                else {
+//                    holder.listComments.setVisibility(View.VISIBLE);
+//                    holder.layoutComment.setVisibility(View.VISIBLE);
+//                    FirebaseDatabase firebaseDatabasee = FirebaseDatabase.getInstance();
+//                    DatabaseReference reference = firebaseDatabasee.getReference().child("posts").child(post.getId()).child("comentarios");
+//
+//                    reference.addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            List<Comment> comments = new ArrayList<Comment>();
+//                            for (DataSnapshot child : dataSnapshot.getChildren()){
+//                                comments.add(child.getValue(Comment.class));
+//                            }
+//                            Log.d("hola", "numero es: "+comments.size());
+//
+//                            for(int i=0; i<comments.size();i++){
+//                                Log.d("hola",comments.get(i).getComment());
+//                            }
+//
+//                            CommentAdapter adapter = new CommentAdapter(mContext, comments);
+//                            holder.listComments.setAdapter(adapter);
+//
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                        }
+//                    });
+//                }
 
                 Toast.makeText(mContext,"numero de coments: "+post.getComments().size(),Toast.LENGTH_LONG).show();
             }

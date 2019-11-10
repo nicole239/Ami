@@ -15,6 +15,7 @@ import java.util.List;
 
 import ec.tec.ami.R;
 import ec.tec.ami.model.Comment;
+import ec.tec.ami.views.utils.ReadableDateFormat;
 
 public class CommentAdapter extends ArrayAdapter<Comment> {
 
@@ -38,7 +39,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
         ImageView imgView = (ImageView) convertView.findViewById(R.id.userImgComment);
         // Populate the data into the template view using the data object
         txtName.setText(comment.getUser().getName());
-        txtTime.setText(comment.getDate().toString());
+        txtTime.setText(ReadableDateFormat.toHumanFormat(comment.getDate()));
         txtComment.setText(comment.getComment());
         //TODO: DISPLAY PHOTO PERFIL
         //imgView.setImageBitmap(comment.getUsuario().getProfilePhoto());

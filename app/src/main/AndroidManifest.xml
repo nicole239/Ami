@@ -20,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".views.activities.ShowCommentsActivity"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
             android:name=".views.activities.PostActivity"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
