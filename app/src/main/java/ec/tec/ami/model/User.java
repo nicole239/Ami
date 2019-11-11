@@ -19,7 +19,7 @@ public class User implements Serializable {
     private int telephone;
     private String email;
     private Map<String, String> friends = new HashMap<>();
-    private List<Notification> notifications = new ArrayList<>();
+    private Map<String, String> notifications = new HashMap<>();
     private List<Post> posts = new ArrayList<>();
     private Type type;
 
@@ -128,11 +128,11 @@ public class User implements Serializable {
         this.friends = friends;
     }
 
-    public List<Notification> getNotifications() {
+    public  Map<String, String> getNotifications() {
         return notifications;
     }
 
-    public void setNotifications(List<Notification> notifications) {
+    public void setNotifications( Map<String, String> notifications) {
         this.notifications = notifications;
     }
 
