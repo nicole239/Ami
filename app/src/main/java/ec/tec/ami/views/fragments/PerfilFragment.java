@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -57,8 +58,10 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
     TextView txtName, txtEmail, txtBirthday, txtGender, txtCity, txtPhone;
     ListView listEducation;
     RecyclerView listPosts, listPhotos;
+    public static RecyclerView galleryPosts;
     PostAdapter postAdapter;
     ImageView imgUser;
+    public static RelativeLayout galleryLayout;
     private User user;
     private LinearLayoutManager linearLayoutManager;
     private int currentPage = PAGE_START;
@@ -67,6 +70,7 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private boolean isLoading = false;
     int itemCount = 0;
     private PostCursor cursor;
+    private GalleryAdapter galleryAdapter;
 
     private SwipeRefreshLayout lytRefresh;
 
@@ -101,6 +105,16 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
         listPosts = view.findViewById(R.id.listPerfilPosts);
         listPhotos = view.findViewById(R.id.photoGallery);
         imgUser = view.findViewById(R.id.imgPerfilPicture);
+        galleryLayout = view.findViewById(R.id.PhotoLayout);
+        galleryPosts = view.findViewById(R.id.galleryPostRecylcer);
+
+        Button btnCloseGallery = view.findViewById(R.id.btnCloseGallery);
+        btnCloseGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                galleryLayout.setVisibility(View.INVISIBLE);
+            }
+        });
 
         lytRefresh = view.findViewById(R.id.lytRefresh);
         lytRefresh.setOnRefreshListener(this);
@@ -126,6 +140,7 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
             }
         });
         setCurrentUser();
+
 
         return view;
     }
@@ -219,17 +234,23 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     private void setPhotoGallery(User user){
-        ArrayList<String> photos = new ArrayList<>();
+        ArrayList<Post> photos = new ArrayList<>();
         for(Post post : user.getPosts()){
             if(post.getType() == Type.PHOTO){
-                photos.add(post.getMedia());
+                photos.add(post);
                 Log.i("PERFIL_TAG","Agregando foto: " + post.getMedia() );
             }
         }
         LinearLayoutManager layoutManager= new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
         listPhotos.setLayoutManager(layoutManager);
-        GalleryAdapter adapter = new GalleryAdapter(getContext(),photos);
-        listPhotos.setAdapter(adapter);
+        galleryAdapter = new GalleryAdapter(getContext(),photos);
+        listPhotos.setAdapter(galleryAdapter);
+
+
+        LinearLayoutManager galleryLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
+        galleryPosts.setLayoutManager(galleryLayoutManager);
+        PostAdapter galleryPostAdapter = new PostAdapter(getContext(), photos);
+        galleryPosts.setAdapter(galleryPostAdapter);
 
     }
 

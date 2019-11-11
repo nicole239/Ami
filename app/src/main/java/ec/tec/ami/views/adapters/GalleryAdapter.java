@@ -5,11 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,15 +14,17 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import ec.tec.ami.R;
+import ec.tec.ami.model.Post;
+import ec.tec.ami.views.fragments.PerfilFragment;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolderGallery> {
 
-    private List<String> mData;
+    private List<Post> mData;
     private Context mContext;
     private LayoutInflater mInflater;
 
 
-    public GalleryAdapter(Context context, List<String> data) {
+    public GalleryAdapter(Context context, List<Post> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.mContext = context;
@@ -40,7 +38,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolderGallery holder, int position) {
-        String photoURL = mData.get(position);
+        String photoURL = mData.get(position).getMedia();
 
         Glide.with(mContext).load(photoURL).into(holder.imgItem);
     }
@@ -48,6 +46,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mData.size();
+    }
+
+    public Post getItem(int position){
+        return mData.get(position);
     }
 
 
@@ -65,7 +67,9 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
         @Override
         public void onClick(View view) {
-            //if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            Log.i("PERFIL_TAG", "Item clicked " + getAdapterPosition());
+            PerfilFragment.galleryLayout.setVisibility(View.VISIBLE);
+            PerfilFragment.galleryPosts.scrollToPosition(getAdapterPosition());
         }
     }
 }
