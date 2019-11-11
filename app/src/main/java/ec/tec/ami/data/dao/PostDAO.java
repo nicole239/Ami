@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -227,5 +228,93 @@ public class PostDAO {
 
             }
         });
+    }
+
+
+    public void deleteLike(final String email, final Post post, final PostEvent event){
+
+        final DatabaseReference reference = database.getReference().child("posts").child(post.getId()).child("likes");
+        Query query = reference.orderByKey();
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child: dataSnapshot.getChildren()){
+                    String user = (String)child.getValue();
+
+                    if(user.equals(email)){
+                        Log.d("hola", " pase por aqui");
+                        reference.child(child.getKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    event.onSuccess(true);
+                                }
+                                else{
+                                    event.onSuccess(false);
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                event.onFailure(e);
+                            }
+                        });
+                        Log.d("hola", child.getKey());
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+    public void deleteDislike(final String email, final Post post, final PostEvent event){
+
+        final DatabaseReference reference = database.getReference().child("posts").child(post.getId()).child("dislikes");
+        Query query = reference.orderByKey();
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child: dataSnapshot.getChildren()){
+                    String user = (String)child.getValue();
+
+                    if(user.equals(email)){
+                        Log.d("hola", " pase por aqui");
+                        reference.child(child.getKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    event.onSuccess(true);
+                                }
+                                else{
+                                    event.onSuccess(false);
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                event.onFailure(e);
+                            }
+                        });
+                        Log.d("hola", child.getKey());
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }
