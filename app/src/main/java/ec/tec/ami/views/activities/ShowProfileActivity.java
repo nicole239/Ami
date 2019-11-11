@@ -110,6 +110,16 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
         });
         Log.i("PERFIL_TAG","Iniciando busqueda de usuario...");
 
+        Button btnFriends = findViewById(R.id.showPerfilBtnPerfilViewFriends);
+        btnFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ShowProfileActivity.this,FriendsActivity.class);
+                intent.putExtra("email",showPerfilUserEmail);
+                startActivity(intent);
+            }
+        });
+
 
 
         setCurrentUser(showPerfilUserEmail);
