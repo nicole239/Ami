@@ -3,7 +3,9 @@ package ec.tec.ami.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class User implements Serializable {
     private String name;
@@ -16,7 +18,7 @@ public class User implements Serializable {
     private String city;
     private int telephone;
     private String email;
-    private List<String> friends = new ArrayList<>();
+    private Map<String, String> friends = new HashMap<>();
     private List<Notification> notifications = new ArrayList<>();
     private List<Post> posts = new ArrayList<>();
     private Type type;
@@ -118,11 +120,11 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public List<String> getFriends() {
+    public Map<String, String> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<String> friends) {
+    public void setFriends(Map<String,String> friends) {
         this.friends = friends;
     }
 

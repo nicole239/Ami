@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,10 +23,20 @@ import ec.tec.ami.model.User;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     private Context context;
     private List<User> friends;
+    private boolean editable = false;
+    private UserListener listener;
 
     public UserAdapter(Context context, List<User> friends) {
         this.context = context;
         this.friends = friends;
+    }
+
+    public void setEditable(boolean editable){
+        this.editable = editable;
+    }
+
+    public void setListener(UserListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -46,6 +57,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
             });
         }else{
             loadContent(holder,friends.get(position));
+        }
+        if (editable) {
+            holder.btnClose.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnClose.setVisibility(View.GONE);
         }
     }
 
@@ -69,10 +85,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView name;
         CircleImageView profile;
+        Button btnClose;
         public ViewHolder(View view){
             super(view);
             name = view.findViewById(R.id.tvName);
             profile = view.findViewById(R.id.imgPhoto);
+            btnClose = view.findViewById(R.id.btnDelete);
+            btnClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(listener !=null){
+                        listener.onDelete(getAdapterPosition());
+                    }
+                }
+            });
             view.setOnClickListener(this);
         }
 
@@ -82,4 +108,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         }
     }
 
+    public interface UserListener
+    {
+        void onDelete(int position);
+    }
 }

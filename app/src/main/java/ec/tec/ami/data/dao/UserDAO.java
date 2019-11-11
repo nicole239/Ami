@@ -106,15 +106,17 @@ public class UserDAO {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User friend = new User();
+
                 if(dataSnapshot.getChildrenCount()==0){
                     if(dataSnapshot.exists()){
+                        User friend = new User();
                         friend.setEmail(dataSnapshot.getValue(String.class));
                         friends.add(friend);
                     }
 
                 }
                 for(DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    User friend = new User();
                     friend.setEmail(snapshot.getValue(String.class));
                     friends.add(friend);
                 }
@@ -197,6 +199,89 @@ public class UserDAO {
         });
     }
 
+    public void addFriends(final String email, final String friend, final UserEvent event){
+        final User user = new User();
+        user.setEmail(email);
+        final User userFriend = new User();
+        userFriend.setEmail(friend);
+        DatabaseReference reference = database.getReference().child("users/"+user.getID()+"/friends").child(userFriend.getID());
+        reference.setValue(friend)
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    DatabaseReference reference2 = database.getReference().child("users/"+userFriend.getID()+"/friends").child(user.getID());
+                    reference2.setValue(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                event.onSuccess();
+                            }else{
+                                event.onFailure(task.getException());
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            event.onFailure(e);
+                        }
+                    });
+                }else{
+                    event.onFailure(task.getException());
+                }
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                event.onFailure(e);
+            }
+        });
+
+    }
+
+    public void deleteFriend(final String email, String friend, final UserEvent event){
+        final User user = new User();
+        user.setEmail(email);
+        final User userFriend = new User();
+        userFriend.setEmail(friend);
+        DatabaseReference reference = database.getReference().child("users/"+user.getID()+"/friends").child(userFriend.getID());
+        final DatabaseReference reference2 = database.getReference().child("users/"+userFriend.getID()+"/friends").child(user.getID());
+
+        reference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    reference2.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                event.onSuccess();
+                            }else{
+                                event.onFailure(task.getException());
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            event.onFailure(e);
+                        }
+                    });
+                }else{
+                    event.onFailure(task.getException());
+                }
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                event.onFailure(e);
+            }
+        });
+
+    }
 
 
 }

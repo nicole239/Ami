@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -32,7 +33,7 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NotificationsFragment extends Fragment {
+public class NotificationsFragment extends Fragment implements NotificationAdapter.NotificationListener {
 
     RecyclerView recyclerView;
     List<Notification> notifications = new ArrayList<>();
@@ -81,14 +82,14 @@ public class NotificationsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
         recyclerView = view.findViewById(R.id.listNotification);
-        adapter = new NotificationAdapter(getContext(), notifications);
+        adapter = new NotificationAdapter(getContext(), notifications, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setStackFromEnd(false);
         recyclerView.setLayoutManager(linearLayoutManager);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+//        itemTouchHelper.attachToRecyclerView(recyclerView);
         refreshFriends();
         return view;
     }
@@ -96,7 +97,7 @@ public class NotificationsFragment extends Fragment {
 
     private void refreshFriends(){
         notifications.clear();
-        for(String str : new String[]{"smoyaqops@gmail.com","steven.moya.quinones@gmail.com"}){
+        for(String str : new String[]{"kahho@gmail.com","steven.moya.quinones@gmail.com"}){
             Notification notification = new Notification();
             notification.setEmail(str);
             notifications.add(notification);
@@ -115,5 +116,28 @@ public class NotificationsFragment extends Fragment {
 //                adapter.notifyDataSetChanged();
 //            }
 //        });
+    }
+
+    @Override
+    public void onAccept(final int position) {
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        UserDAO.getInstance().addFriends(email,notifications.get(position).getEmail(),new UserEvent(){
+            @Override
+            public void onSuccess() {
+                notifications.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(NotificationsFragment.this.getContext(),"Could not add the friend",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onReject(int position) {
+        notifications.remove(position);
+        adapter.notifyItemRemoved(position);
     }
 }

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -20,12 +21,13 @@ import ec.tec.ami.R;
 import ec.tec.ami.data.dao.UserDAO;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.User;
+import ec.tec.ami.views.activities.DialogDecision;
 import ec.tec.ami.views.adapters.UserAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AmigosFragment extends Fragment {
+public class AmigosFragment extends Fragment implements UserAdapter.UserListener{
 
     RecyclerView listFriends;
     UserAdapter friendsAdapter;
@@ -44,6 +46,8 @@ public class AmigosFragment extends Fragment {
         listFriends = view.findViewById(R.id.listFriends);
         recyclerView = view.findViewById(R.id.listFriends);
         adapter = new UserAdapter(getContext(),friends);
+        adapter.setEditable(true);
+        adapter.setListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -69,4 +73,32 @@ public class AmigosFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onDelete(final int position) {
+        DialogDecision dialogDecision = new DialogDecision(getContext(), "Confirmation", "Do you want to delete this friend?", new DialogDecision.DialogResult() {
+            @Override
+            public void onConfirm() {
+                String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                final String friend = friends.get(position).getEmail();
+                UserDAO.getInstance().deleteFriend(email, friend, new UserEvent(){
+                    @Override
+                    public void onSuccess() {
+                        friends.remove(position);
+                        adapter.notifyItemRemoved(position);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(AmigosFragment.this.getContext(),"Could not delete friend",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+        dialogDecision.show();
+    }
 }

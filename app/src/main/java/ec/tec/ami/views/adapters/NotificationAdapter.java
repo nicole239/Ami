@@ -25,9 +25,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private Context context;
     private List<Notification> notifications;
 
-    public NotificationAdapter(Context context, List<Notification> friends) {
+    private NotificationListener notificationListener;
+
+    public NotificationAdapter(Context context, List<Notification> friends, @NonNull NotificationListener listener) {
         this.context = context;
         this.notifications = friends;
+        this.notificationListener = listener;
     }
 
     @NonNull
@@ -79,12 +82,30 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             accept = view.findViewById(R.id.btnAccept);
             reject = view.findViewById(R.id.btnReject);
             view.setOnClickListener(this);
+            accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    notificationListener.onAccept(getAdapterPosition());
+                }
+            });
+
+            reject.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    notificationListener.onReject(getAdapterPosition());
+                }
+            });
         }
 
         @Override
         public void onClick(View view) {
             //Call to profile;
         }
+    }
+
+    public interface NotificationListener{
+        void onAccept(int position);
+        void onReject(int position);
     }
 
 }

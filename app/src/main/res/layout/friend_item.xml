@@ -23,4 +23,12 @@
         android:layout_marginLeft="16dp"
         android:gravity="center_vertical"
         android:fontFamily="@font/nunito_bold"/>
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/ic_close"
+        />
 </RelativeLayout>
