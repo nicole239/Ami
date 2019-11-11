@@ -1,6 +1,8 @@
 package ec.tec.ami.views.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import ec.tec.ami.R;
 import ec.tec.ami.data.dao.UserDAO;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.User;
+import ec.tec.ami.views.activities.ShowProfileActivity;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     private Context context;
@@ -70,11 +73,28 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         return friends.size();
     }
 
-    private void loadContent(@NonNull UserAdapter.ViewHolder holder, User user){
+    private void loadContent(@NonNull UserAdapter.ViewHolder holder, final User user){
         Glide.with(context)
                 .load(user.getProfilePhoto())
                 .into(holder.profile);
         holder.name.setText(user.getName() + " "+user.getLastNameA() + " "+user.getLastNameB());
+        holder.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ShowProfileActivity.class);
+                intent.putExtra("showPerfilUser", user.getEmail());
+                context.startActivity(intent);
+            }
+        });
+
+        holder.profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ShowProfileActivity.class);
+                intent.putExtra("showPerfilUser", user.getEmail());
+                context.startActivity(intent);
+            }
+        });
     }
 
     public void clear(){

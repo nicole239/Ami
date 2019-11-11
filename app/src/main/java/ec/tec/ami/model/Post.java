@@ -114,7 +114,9 @@ public class Post implements Serializable {
 
     public int getTotalLikes(){
         if(likes!= null) {
-            return likes.size();
+            int count = 0;
+            for(int i=0;i<likes.size();i++)if(likes.get(i)!=null)count++;
+            return count;
         }
         else{
             return 0;
@@ -123,7 +125,9 @@ public class Post implements Serializable {
 
     public int getTotalDislikes(){
         if(dislikes!=null) {
-            return dislikes.size();
+            int count = 0;
+            for(int i=0;i<dislikes.size();i++)if(dislikes.get(i)!=null)count++;
+            return count;
         }
         else{
             return 0;

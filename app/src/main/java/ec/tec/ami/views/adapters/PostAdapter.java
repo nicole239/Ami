@@ -137,7 +137,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 mContext.startActivity(intent);
             }
         });
-        
+
+        holder.imgUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ShowProfileActivity.class);
+                Log.d("hola", mData.get(position).getUser());
+                intent.putExtra("showPerfilUser", mData.get(position).getUser());
+                mContext.startActivity(intent);
+            }
+        });
+
         holder.labelLikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {

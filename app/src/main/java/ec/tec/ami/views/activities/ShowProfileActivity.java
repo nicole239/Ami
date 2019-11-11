@@ -161,7 +161,7 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
 //        if(postAdapter == null) {
         linearLayoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL, false);
         listPosts.setLayoutManager(linearLayoutManager);
-        postAdapter = new PostAdapter(getApplicationContext(), user.getPosts());
+        postAdapter = new PostAdapter(this, user.getPosts());
         listPosts.setAdapter(postAdapter);
         listPosts.addOnScrollListener(new PaginationListener(linearLayoutManager) {
             @Override
