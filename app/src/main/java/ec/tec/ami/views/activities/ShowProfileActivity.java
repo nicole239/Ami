@@ -199,10 +199,10 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
     }
 
     private void setPhotoGallery(User user){
-        ArrayList<String> photos = new ArrayList<>();
+        ArrayList<Post> photos = new ArrayList<>();
         for(Post post : user.getPosts()){
             if(post.getType() == Type.PHOTO){
-                photos.add(post.getMedia());
+                photos.add(post);
                 Log.i("PERFIL_TAG","Agregando foto: " + post.getMedia() );
             }
         }
