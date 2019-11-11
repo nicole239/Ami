@@ -2,15 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ec.tec.ami">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
@@ -19,7 +10,12 @@
         android:roundIcon="@drawable/circular_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.activities.ShowProfileActivity" android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".views.activities.DialogSendFriendRequest"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
+            android:name=".views.activities.ShowProfileActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".views.activities.ShowCommentsActivity"
             android:theme="@style/AppThemeNoActionBar" />
@@ -56,5 +52,14 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>

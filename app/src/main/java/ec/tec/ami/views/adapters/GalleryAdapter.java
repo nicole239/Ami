@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,12 +23,16 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     private List<Post> mData;
     private Context mContext;
     private LayoutInflater mInflater;
+    private  RelativeLayout galleryLayout;
+    private RecyclerView galleryPosts;
 
 
-    public GalleryAdapter(Context context, List<Post> data) {
+    public GalleryAdapter(Context context, List<Post> data, RelativeLayout galleryLayout, RecyclerView galleryPosts) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.mContext = context;
+        this.galleryLayout = galleryLayout;
+        this.galleryPosts = galleryPosts;
     }
 
     @Override
@@ -68,8 +73,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         @Override
         public void onClick(View view) {
             Log.i("PERFIL_TAG", "Item clicked " + getAdapterPosition());
-            PerfilFragment.galleryLayout.setVisibility(View.VISIBLE);
-            PerfilFragment.galleryPosts.scrollToPosition(getAdapterPosition());
+            galleryLayout.setVisibility(View.VISIBLE);
+            galleryPosts.scrollToPosition(getAdapterPosition());
         }
     }
 }

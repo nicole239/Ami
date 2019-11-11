@@ -283,5 +283,30 @@ public class UserDAO {
 
     }
 
+    public void addNotification(final String email, final String friend, final UserEvent event){
+        final User user = new User();
+        user.setEmail(email);
+        final User userFriend = new User();
+        userFriend.setEmail(friend);
+        DatabaseReference reference = database.getReference().child("users/"+userFriend.getID()+"/notifications").child(user.getID());
+        reference.setValue(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            event.onSuccess();
+                        }else{
+                            event.onFailure(task.getException());
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        event.onFailure(e);
+                    }
+                });
+    }
+
 
 }

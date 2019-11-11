@@ -57,11 +57,10 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private boolean showingInfo = false;
     TextView txtName, txtEmail, txtBirthday, txtGender, txtCity, txtPhone;
     ListView listEducation;
-    RecyclerView listPosts, listPhotos;
-    public static RecyclerView galleryPosts;
+    RecyclerView listPosts, listPhotos,  galleryPosts;
     PostAdapter postAdapter;
     ImageView imgUser;
-    public static RelativeLayout galleryLayout;
+    private RelativeLayout galleryLayout;
     private User user;
     private LinearLayoutManager linearLayoutManager;
     private int currentPage = PAGE_START;
@@ -240,9 +239,8 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
         }
         LinearLayoutManager layoutManager= new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
         listPhotos.setLayoutManager(layoutManager);
-        galleryAdapter = new GalleryAdapter(getContext(),photos);
+        galleryAdapter = new GalleryAdapter(getContext(),photos, galleryLayout, galleryPosts);
         listPhotos.setAdapter(galleryAdapter);
-
 
         LinearLayoutManager galleryLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
         galleryPosts.setLayoutManager(galleryLayoutManager);
