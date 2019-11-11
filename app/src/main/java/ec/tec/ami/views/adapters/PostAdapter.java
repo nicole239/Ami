@@ -46,6 +46,7 @@ import ec.tec.ami.model.Post;
 import ec.tec.ami.model.Type;
 import ec.tec.ami.model.User;
 import ec.tec.ami.views.activities.ShowCommentsActivity;
+import ec.tec.ami.views.activities.ShowProfileActivity;
 import ec.tec.ami.views.utils.ReadableDateFormat;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
@@ -126,6 +127,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         else{
             holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
         }
+
+        holder.txtName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, ShowProfileActivity.class);
+                Log.d("hola", mData.get(position).getUser());
+                intent.putExtra("showPerfilUser", mData.get(position).getUser());
+                mContext.startActivity(intent);
+            }
+        });
         
         holder.labelLikes.setOnClickListener(new View.OnClickListener() {
             @Override

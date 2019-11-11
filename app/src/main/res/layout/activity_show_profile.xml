@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.activities.ShowProfileActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/showPerfilBar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        >
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/showPerfilToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:contentInsetEnd="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetRight="0dp"
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_below="@+id/showPerfilBar_layout"
+        android:id="@+id/showPerfilLytRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/showPerfilButtonArea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/showPerfilBtnPerfilAddDelFriend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:text="Solicitud" />
+                </RelativeLayout>
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/showPerfilImgPerfilPicture"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:layout_below="@+id/showPerfilButtonArea"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/default_perfil" />
+
+                <TextView
+                    android:id="@+id/showPerfilTxtPerfilName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/showPerfilImgPerfilPicture"
+                    android:text="Name LastName1 LastName2"
+                    android:textSize="25dp"
+                    android:textStyle="bold"/>
+
+
+                <RelativeLayout
+                    android:id="@+id/showPerfilLayoutPerfilInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/showPerfilTxtPerfilName"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/showPerfilLblCorreo"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_toStartOf="@+id/showPerfilTxtCorreo"
+                        android:layout_marginTop="10dp"
+                        app:srcCompat="@drawable/ic_email_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/showPerfilTxtCorreo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignBaseline="@+id/showPerfilLblCorreo"
+                        android:layout_marginTop="10dp"
+                        android:text="correo@gmail.com"
+                        android:textSize="18dp" />
+
+                    <ImageView
+                        android:id="@+id/showPerfilLblBirthday"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_below="@+id/showPerfilLblCorreo"
+                        android:layout_marginTop="10dp"
+                        android:layout_toStartOf="@+id/showPerfilTxtPerfilBirthday"
+                        app:srcCompat="@drawable/ic_cake_black_24dp" />
+
+
+                    <TextView
+                        android:id="@+id/showPerfilTxtPerfilBirthday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/showPerfilLblCorreo"
+                        android:layout_marginTop="10dp"
+                        android:layout_alignBaseline="@+id/showPerfilLblBirthday"
+                        android:layout_centerHorizontal="true"
+                        android:text="01/01/2000"
+                        android:textSize="18dp" />
+
+                    <ImageView
+                        android:id="@+id/showPerfilLblGender"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_below="@+id/showPerfilLblBirthday"
+                        android:layout_marginTop="10dp"
+                        android:layout_toStartOf="@id/showPerfilTxtPerfilGender"
+                        android:src="@drawable/gender_icon" />
+
+                    <TextView
+                        android:id="@+id/showPerfilTxtPerfilGender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/showPerfilLblBirthday"
+                        android:layout_alignBaseline="@id/showPerfilLblGender"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:text="Female"
+                        android:textSize="18dp" />
+
+                    <ImageView
+                        android:id="@+id/showPerfilLblCity"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_below="@+id/showPerfilLblGender"
+                        android:layout_toStartOf="@id/showPerfilTxtPerfilCity"
+                        android:layout_marginTop="10dp"
+                        app:srcCompat="@drawable/ic_location_city_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/showPerfilTxtPerfilCity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/showPerfilLblGender"
+                        android:layout_alignBaseline="@id/showPerfilLblCity"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:text="Ciudad"
+                        android:textSize="18dp" />
+
+                    <ImageView
+                        android:id="@+id/showPerfilLblPhone"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_below="@+id/showPerfilLblCity"
+                        android:layout_toStartOf="@id/showPerfilTxtPerfilPhone"
+                        android:layout_marginTop="10dp"
+                        app:srcCompat="@drawable/ic_settings_phone_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/showPerfilTxtPerfilPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/showPerfilLblCity"
+                        android:layout_alignBaseline="@id/showPerfilLblPhone"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:text="88888888"
+                        android:textSize="18dp" />
+
+                    <TextView
+                        android:id="@+id/showPerfilLblEducation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/showPerfilLblPhone"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:text="Education"
+                        android:textSize="18dp" />
+
+                    <ListView
+                        android:id="@+id/showPerfilListPerfilEducation"
+                        android:layout_width="300dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@id/showPerfilLblEducation" />
+
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/showPerfilBtnPerfilViewData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/showPerfilLayoutPerfilInfo"
+                    android:layout_centerInParent="true"
+                    android:text="Ver Info" />
+
+                <Button
+                    android:id="@+id/showPerfilBtnPerfilViewFriends"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/showPerfilBtnPerfilViewData"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:text="Ver Amigos"/>
+
+                <TextView
+                    android:id="@+id/showPerfilLblPerfilFotos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/showPerfilBtnPerfilViewFriends"
+                    android:layout_marginStart="20dp"
+                    android:text="Fotos"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/showPerfilPhotoGallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/showPerfilLblPerfilFotos" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/showPerfilListPerfilPosts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/showPerfilPhotoGallery" />
+
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</RelativeLayout>
