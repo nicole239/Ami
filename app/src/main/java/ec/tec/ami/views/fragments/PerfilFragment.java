@@ -205,6 +205,9 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
         }
         ArrayAdapter<String> educationAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, items);
         listEducation.setAdapter(educationAdapter);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)listEducation.getLayoutParams();
+        params.height = 100 * items.size()*2;
+        listEducation.setLayoutParams(params);
     }
 
     private void setCurrentUser(){
