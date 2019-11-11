@@ -49,7 +49,7 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
     private boolean showingInfo = false;
     TextView txtName, txtEmail, txtBirthday, txtGender, txtCity, txtPhone;
     ListView listEducation;
-    RecyclerView listPosts, listPhotos;
+    RecyclerView listPosts, listPhotos, galleryPosts;
     PostAdapter postAdapter;
     ImageView imgUser;
     private User user;
@@ -64,6 +64,7 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
     String showPerfilUserEmail;
 
     private SwipeRefreshLayout lytRefresh;
+    private RelativeLayout galleryLayout;
 
 
     DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -93,6 +94,16 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
         listPosts = findViewById(R.id.showPerfilListPerfilPosts);
         listPhotos = findViewById(R.id.showPerfilPhotoGallery);
         imgUser = findViewById(R.id.showPerfilImgPerfilPicture);
+        galleryLayout = findViewById(R.id.PhotoLayoutShow);
+        galleryPosts = findViewById(R.id.galleryPostRecylcerShow);
+
+        Button btnCloseGallery = findViewById(R.id.btnCloseGalleryShow);
+        btnCloseGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                galleryLayout.setVisibility(View.INVISIBLE);
+            }
+        });
 
         intent = getIntent();
         showPerfilUserEmail = intent.getStringExtra("showPerfilUser");
@@ -117,6 +128,14 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
                 Intent intent = new Intent(ShowProfileActivity.this,FriendsActivity.class);
                 intent.putExtra("email",showPerfilUserEmail);
                 startActivity(intent);
+            }
+        });
+
+        Button btnSolicitud = findViewById(R.id.showPerfilBtnPerfilAddDelFriend);
+        btnSolicitud.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSendRequestDialog();
             }
         });
 
@@ -218,8 +237,13 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
         }
         LinearLayoutManager layoutManager= new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL, false);
         listPhotos.setLayoutManager(layoutManager);
-        GalleryAdapter adapter = new GalleryAdapter(getApplicationContext(),photos);
+        GalleryAdapter adapter = new GalleryAdapter(getApplicationContext(),photos, galleryLayout, galleryPosts);
         listPhotos.setAdapter(adapter);
+
+        LinearLayoutManager galleryLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
+        galleryPosts.setLayoutManager(galleryLayoutManager);
+        PostAdapter galleryPostAdapter = new PostAdapter(this, photos);
+        galleryPosts.setAdapter(galleryPostAdapter);
 
     }
 
@@ -269,5 +293,14 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void openSendRequestDialog(){
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        Intent intent = new Intent(this, DialogSendFriendRequest.class);
+        intent.putExtra(DialogSendFriendRequest.NAME_TAG, txtName.getText().toString());
+        intent.putExtra(DialogSendFriendRequest.TO_EMAIL_TAG, showPerfilUserEmail);
+        intent.putExtra(DialogSendFriendRequest.FROM_EMAIL_TAG, email);
+        startActivity(intent);
     }
 }

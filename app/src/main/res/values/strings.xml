@@ -19,9 +19,11 @@
     <string name="tab_text_3">Amigos</string>
     <string name="tab_text_4">Busqueda</string>
     <string name="tab_text_5">Notificaciones</string>
+    <string name="confirm_request">Send a friend request to:</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="new_post">New post</string>
     <string name="edit_account_title">Edit account</string>
+
 </resources>

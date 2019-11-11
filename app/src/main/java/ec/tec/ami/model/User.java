@@ -128,11 +128,11 @@ public class User implements Serializable {
         this.friends = friends;
     }
 
-    public  Map<String, String> getNotifications() {
+    public Map<String, String> getNotifications() {
         return notifications;
     }
 
-    public void setNotifications( Map<String, String> notifications) {
+    public void setNotifications(Map<String, String> notifications) {
         this.notifications = notifications;
     }
 
