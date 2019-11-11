@@ -95,6 +95,7 @@ public class PostDAO {
                     List<String> td = (ArrayList<String>) dataSnapshot.getValue();
                     post.setLikes(td);
                     for(int i=0; i<td.size();i++){
+                        if(td.get(i) == null)continue;
                         Log.d("Likes", td.get(i));
                     }
 
