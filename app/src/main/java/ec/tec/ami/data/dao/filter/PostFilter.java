@@ -25,10 +25,12 @@ public class PostFilter implements Filter {
                     accept = accept || filter.accept(post);
                     if(accept)
                         return true;
+                    break;
                 case AND:
                     accept = accept && filter.accept(post);
                     if(!accept)
                         return false;
+                    break;
             }
         }
         return accept;
