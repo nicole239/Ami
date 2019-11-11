@@ -123,15 +123,17 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     private void newCursor(){
-        String email =  FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final PostFilter postFilter = new PostFilter(PostFilter.FilterType.OR);
+        final String email =  FirebaseAuth.getInstance().getCurrentUser().getEmail();
         final User user = new User();
         user.setEmail(email);
         UserDAO.getInstance().listFriends(user,new UserEvent(){
             @Override
             public void onSuccess(List<User> users) {
-                List<String> friends = new ArrayList<>();
-                for(User u : users)friends.add(u.getEmail());
-                cursor = new PostCursor(friends, FirebaseAuth.getInstance().getCurrentUser().getEmail(),PAGE_SIZE);
+                postFilter.addFilter(new FriendsFilter(users));
+                postFilter.addFilter(new UserFilter(email));
+                cursor = new PostCursor(null, FirebaseAuth.getInstance().getCurrentUser().getEmail(),PAGE_SIZE);
+                cursor.setFilter(postFilter);
                 cursor.setEvent(new PostCursor.PostEvent() {
                     @Override
                     public void onDataFetched(List<Post> posts) {

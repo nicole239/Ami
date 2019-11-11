@@ -7,10 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import ec.tec.ami.R;
@@ -23,6 +26,7 @@ public class FriendsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<User> friends = new ArrayList<>();
     UserAdapter adapter;
+    Switch btnSwitch;
 
     String email;
 
@@ -54,6 +58,19 @@ public class FriendsActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
+        btnSwitch = findViewById(R.id.btnSwitch);
+
+        btnSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    commonFriends();
+                }else{
+                    refreshFriends();
+                }
+            }
+        });
+
         email = getIntent().getStringExtra("email");
 
         refreshFriends();
@@ -69,6 +86,49 @@ public class FriendsActivity extends AppCompatActivity {
                 for(User u : users){
                     friends.add(u);
                 }
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void commonFriends(){
+        String emailUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        User user = new User();
+        user.setEmail(emailUser);
+        UserDAO.getInstance().listFriends(user,new UserEvent(){
+            @Override
+            public void onSuccess(List<User> users) {
+//                Iterator<User> friendIterator = friends.iterator();
+//                while ((friendIterator.hasNext())){
+//                    User friend = friendIterator.next();
+//                    boolean found = false;
+//                    Iterator<User> userIterator = users.iterator();
+//                    while ((userIterator.hasNext())){
+//                        User u = userIterator.next();
+//                        if(friend.getEmail().equals(u.getEmail())){
+//                            found = true;
+//                            userIterator.remove();
+//                            break;
+//                        }
+//                        if(!found){
+//                            friendIterator.remove();
+//                        }
+//                    }
+//                }
+                for(User friend : new ArrayList<>(friends)){
+                    boolean found = false;
+                    for(User u : new ArrayList<>(users)){
+                        if(friend.getEmail().equals(u.getEmail())){
+                            found = true;
+                            users.remove(u);
+                            break;
+                        }
+                    }
+                    if(!found){
+                        friends.remove(friend);
+                    }
+                }
+
                 adapter.notifyDataSetChanged();
             }
         });

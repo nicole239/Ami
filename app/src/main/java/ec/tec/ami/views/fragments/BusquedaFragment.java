@@ -25,7 +25,9 @@ import ec.tec.ami.R;
 import ec.tec.ami.data.dao.PostCursor;
 import ec.tec.ami.data.dao.UserCursor;
 import ec.tec.ami.data.dao.UserDAO;
+import ec.tec.ami.data.dao.filter.FriendsFilter;
 import ec.tec.ami.data.dao.filter.PostFilter;
+import ec.tec.ami.data.dao.filter.UserFilter;
 import ec.tec.ami.data.dao.filter.WordFilter;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.Post;
@@ -203,16 +205,18 @@ public class BusquedaFragment extends Fragment implements SwipeRefreshLayout.OnR
         userAdapter.clear();
         postAdapter.clear();
         final PostFilter postFilter = new PostFilter(PostFilter.FilterType.OR);
+        final PostFilter postFilterAND = new PostFilter(PostFilter.FilterType.AND);
         final User u = new User();
         u.setEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         UserDAO.getInstance().listFriends(u, new UserEvent(){
             @Override
             public void onSuccess(List<User> users) {
-//                postFilter.addFilter(new FriendsFilter(users));
-//                postFilter.addFilter(new UserFilter(u.getEmail()));
-                postFilter.addFilter(new WordFilter(word));
+                postFilter.addFilter(new FriendsFilter(users));
+                postFilter.addFilter(new UserFilter(u.getEmail()));
+                postFilterAND.addFilter(postFilter);
+                postFilterAND.addFilter(new WordFilter(word));
                 postCursor = new PostCursor(null, FirebaseAuth.getInstance().getCurrentUser().getEmail(),2);
-                postCursor.setFilter(postFilter);
+                postCursor.setFilter(postFilterAND);
                 postCursor.setEvent(new PostCursor.PostEvent() {
                     @Override
                     public void onDataFetched(List<Post> posts) {
