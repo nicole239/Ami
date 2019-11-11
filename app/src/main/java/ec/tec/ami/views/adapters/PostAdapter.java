@@ -91,7 +91,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Glide.with(mContext).load(post.getMedia()).into(holder.img);
             }else if (post.getType() == Type.VIDEO){
                 holder.img.setVisibility(View.GONE);
-
+                holder.video.setVisibility(View.VISIBLE);
 
                 String videoID = urlToEmbeded(post.getMedia());
 
