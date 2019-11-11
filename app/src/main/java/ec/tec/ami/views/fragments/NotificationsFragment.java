@@ -1,32 +1,119 @@
 package ec.tec.ami.views.fragments;
 
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import ec.tec.ami.R;
+import ec.tec.ami.data.dao.UserDAO;
+import ec.tec.ami.data.event.UserEvent;
+import ec.tec.ami.model.Notification;
+import ec.tec.ami.model.User;
+import ec.tec.ami.views.adapters.NotificationAdapter;
+import ec.tec.ami.views.adapters.UserAdapter;
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class NotificationsFragment extends Fragment {
 
+    RecyclerView recyclerView;
+    List<Notification> notifications = new ArrayList<>();
+    NotificationAdapter adapter;
+
 
     public NotificationsFragment() {
-        // Required empty public constructor
+
     }
 
+
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            final int position = viewHolder.getAdapterPosition();
+            if(direction == ItemTouchHelper.LEFT){
+                notifications.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
+
+            if(direction == ItemTouchHelper.RIGHT){
+                notifications.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
+        }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder,dX, dY, actionState, isCurrentlyActive)
+                .addSwipeRightBackgroundColor(ContextCompat.getColor(NotificationsFragment.this.getContext(),R.color.colorPrimary))
+                .addSwipeLeftBackgroundColor(ContextCompat.getColor(NotificationsFragment.this.getContext(),R.color.colorPrimary))
+                .addSwipeLeftActionIcon(R.drawable.ic_sentiment_dissatisfied_black_48dp)
+                .addSwipeRightActionIcon(R.drawable.ic_sentiment_satisfied_black_48dp)
+                .create()
+                .decorate();
+        }
+    };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        View view = inflater.inflate(R.layout.fragment_notifications, container, false);
+        recyclerView = view.findViewById(R.id.listNotification);
+        adapter = new NotificationAdapter(getContext(), notifications);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setStackFromEnd(false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+        refreshFriends();
+        return view;
     }
 
+
+    private void refreshFriends(){
+        notifications.clear();
+        for(String str : new String[]{"smoyaqops@gmail.com","steven.moya.quinones@gmail.com"}){
+            Notification notification = new Notification();
+            notification.setEmail(str);
+            notifications.add(notification);
+            adapter.notifyDataSetChanged();
+        }
+//        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+//        User user = new User();
+//        user.setEmail(email);
+//        UserDAO.getInstance().listFriends(user,new UserEvent(){
+//            @Override
+//            public void onSuccess(List<User> users) {
+//                friends.clear();
+//                for(User u : users){
+//                    friends.add(u);
+//                }
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
+    }
 }
