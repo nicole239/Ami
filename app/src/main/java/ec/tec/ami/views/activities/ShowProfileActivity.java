@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,7 +65,9 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
     private PostCursor cursor;
     Intent intent;
     String showPerfilUserEmail;
-    Button btnSolicitud;
+
+    Boolean isFriend = false;
+    private Button btnSolicitud;
 
     private SwipeRefreshLayout lytRefresh;
     private RelativeLayout galleryLayout;
@@ -138,9 +141,13 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
         btnSolicitud.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openSendRequestDialog();
+                if(isFriend)
+                    deleteFriend();
+                else
+                    openSendRequestDialog();
             }
         });
+
 
         setCurrentUser(showPerfilUserEmail);
 
@@ -156,29 +163,20 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
     }
 
     private void setCurrentUser(String email){
-
+        isFriend();
         final String emailUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         if(!emailUser.equals(showPerfilUserEmail)){
-            UserDAO.getInstance().checkFriend(emailUser, showPerfilUserEmail, new UserEvent(){
+            NotificationDAO.getInstance().checkNotification(emailUser, showPerfilUserEmail, new NotificationEvent(){
                 @Override
-                public void onSuccess(boolean state) {
-                    if(state){
-                        btnSolicitud.setVisibility(View.INVISIBLE);
-                    }else{
-                        NotificationDAO.getInstance().checkNotification(emailUser, showPerfilUserEmail, new NotificationEvent(){
-                            @Override
-                            public void onNotificationSent() {
-                                btnSolicitud.setText("Request sent");
-                                btnSolicitud.setEnabled(false);
-                            }
+                public void onNotificationSent() {
+                    btnSolicitud.setText("Request sent");
+                    btnSolicitud.setEnabled(false);
+                }
 
-                            @Override
-                            public void onNotificationReceived() {
-                                btnSolicitud.setText("Request received");
-                                btnSolicitud.setEnabled(false);
-                            }
-                        });
-                    }
+                @Override
+                public void onNotificationReceived() {
+                    btnSolicitud.setText("Request received");
+                    btnSolicitud.setEnabled(false);
                 }
             });
         }else{
@@ -324,12 +322,61 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
         return true;
     }
 
-    public void openSendRequestDialog(){
+    private void openSendRequestDialog(){
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         Intent intent = new Intent(this, DialogSendFriendRequest.class);
         intent.putExtra(DialogSendFriendRequest.NAME_TAG, txtName.getText().toString());
         intent.putExtra(DialogSendFriendRequest.TO_EMAIL_TAG, showPerfilUserEmail);
         intent.putExtra(DialogSendFriendRequest.FROM_EMAIL_TAG, email);
         startActivity(intent);
+
+    }
+
+    private void isFriend(){
+        final User currentUser = new User();
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        currentUser.setEmail(email);
+
+        UserDAO.getInstance().listFriends(currentUser,new UserEvent(){
+            @Override
+            public void onSuccess(List<User> users) {
+                for(User u : users){
+                    if(u.getEmail().equals(showPerfilUserEmail)) {
+                        isFriend = true;
+                        btnSolicitud.setText("Eliminar Amigo");
+                    }
+                }
+            }
+        });
+
+    }
+
+    private void deleteFriend(){
+        DialogDecision dialogDecision = new DialogDecision(this, "Confirmation", "Do you want to delete this friend?", new DialogDecision.DialogResult() {
+            @Override
+            public void onConfirm() {
+                String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                final String friend = showPerfilUserEmail;
+                UserDAO.getInstance().deleteFriend(email, friend, new UserEvent(){
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(ShowProfileActivity.this,"Friend deleted",Toast.LENGTH_SHORT).show();
+                        isFriend = false;
+                        btnSolicitud.setText("Solicitud");
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(ShowProfileActivity.this,"Could not delete friend",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+        dialogDecision.show();
     }
 }

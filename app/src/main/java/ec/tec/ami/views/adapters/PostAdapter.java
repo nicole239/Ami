@@ -45,6 +45,7 @@ import ec.tec.ami.model.Comment;
 import ec.tec.ami.model.Post;
 import ec.tec.ami.model.Type;
 import ec.tec.ami.model.User;
+import ec.tec.ami.views.activities.DialogDecision;
 import ec.tec.ami.views.activities.ShowCommentsActivity;
 import ec.tec.ami.views.activities.ShowProfileActivity;
 import ec.tec.ami.views.utils.ReadableDateFormat;
@@ -58,12 +59,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private ItemClickListener mClickListener;
     final String youTubeUrlRegEx = "^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))/";
     final String[] videoIdRegex = { "\\?vi?=([^&]*)","watch\\?.*v=([^&]*)", "(?:embed|vi?)/([^/?]*)", "^([A-Za-z0-9\\-]*)"};
+    private PostAdapter adapter;
 
     // data is passed into the constructor
     public PostAdapter(Context context, List<Post> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.mContext = context;
+        this.adapter = this;
     }
 
     // inflates the row layout from xml when needed
@@ -78,7 +81,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Post post = mData.get(position);
 
-        //TODO: MOSTRAR FOTO PERFIL
         //holder.imgUser.setImageBitmap(post.getUsuario().getImage());
         holder.multimediaFrame.setVisibility(View.GONE);
         holder.txtName.setText(post.getUser());
@@ -179,7 +181,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             });
 
                         }else {
-                            Toast.makeText(view.getContext(), "Something went wrond", Toast.LENGTH_LONG).show();
+                            Toast.makeText(view.getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -353,6 +355,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 holder.txtName.setText(user.getName() + " "+user.getLastNameA());
             }
         });
+
+        String currentMail =  FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        if(currentMail.equals(post.getUser())){
+            holder.btnDeletePost.setVisibility(View.VISIBLE);
+        }else{
+            holder.btnDeletePost.setVisibility(View.INVISIBLE);
+        }
+
     }
 
 
@@ -392,23 +402,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView imgUser;
-        TextView txtName;
-        TextView txtTime;
-        TextView txtDescription;
-        ImageView img;
+        ImageView imgUser, img, labelLikes, labelDislikes, imgComments;
+        TextView txtName, txtTime, txtDescription, txtLikes, txtDislikes,userCommentNameTxt;
         WebView video;
-        RelativeLayout multimediaFrame;
-        TextView txtLikes;
-        TextView txtDislikes;
-        ImageView imgComments;
+        RelativeLayout multimediaFrame, layoutComment;
         ListView listComments;
-        ImageView labelLikes;
-        ImageView labelDislikes;
-        RelativeLayout layoutComment;
-        TextView userCommentNameTxt;
         EditText userCommentDetail;
-        Button userCommentSend;
+        Button userCommentSend, btnDeletePost;
         
 
         @SuppressLint("SetJavaScriptEnabled")
@@ -438,11 +438,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             userCommentDetail = itemView.findViewById(R.id.userCommentEditText);
             userCommentSend = itemView.findViewById(R.id.userComentarioSendBtn);
             layoutComment.setVisibility(View.GONE);
+            btnDeletePost = itemView.findViewById(R.id.btnDeletePost);
 
             video.setWebViewClient(new WebViewClient());
             video.setWebChromeClient(new WebChromeClient());
             video.getSettings().setJavaScriptEnabled(true);
             video.getSettings().setDomStorageEnabled(true);
+
 
 
             itemView.setOnClickListener(this);
@@ -456,14 +458,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                         listComments.setVisibility(View.VISIBLE);
                 }
             });
-            /*
-            labelLikes.setOnClickListener(new View.OnClickListener() {
+
+            btnDeletePost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(itemView.getContext(), "Hice click en like", Toast.LENGTH_LONG).show();
-                    Toast.makeText(itemView.getContext(), mData.get(0).getUser(), Toast.LENGTH_LONG).show();
+                    deletePost(getAdapterPosition());
                 }
-            });*/
+            });
 
         }
 
@@ -492,5 +493,40 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+    }
+
+    private void deletePost(final int position){
+        final Post postToDelete = mData.get(position);
+        DialogDecision dialogDecision = new DialogDecision(mContext, "Confirmation", "Do you want to delete this post?", new DialogDecision.DialogResult() {
+            @Override
+            public void onConfirm() {
+                PostDAO.getInstance().deletePost( postToDelete, new PostEvent(){
+                    @Override
+                    public void onSuccess(boolean status) {
+                        if(status){
+                            Toast.makeText(mContext,"Post deleted",Toast.LENGTH_LONG).show();
+                            mData.remove(position);
+                            adapter.notifyDataSetChanged();
+
+                        }
+                        else{
+                            Toast.makeText(mContext,"Failed",Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(mContext,"Failed to delete post",Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+        dialogDecision.show();
+
     }
 }
