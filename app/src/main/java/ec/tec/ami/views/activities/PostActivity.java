@@ -337,6 +337,8 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Post user) {
                 Toast.makeText(PostActivity.this,"Post published",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                setResult(Activity.RESULT_OK,intent);
                 finish();
             }
 

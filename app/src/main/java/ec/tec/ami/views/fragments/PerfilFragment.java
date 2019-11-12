@@ -40,6 +40,7 @@ import ec.tec.ami.model.Post;
 import ec.tec.ami.model.Type;
 import ec.tec.ami.model.User;
 import ec.tec.ami.views.activities.CreateAccountActivity;
+import ec.tec.ami.views.activities.DialogDecision;
 import ec.tec.ami.views.activities.EditAccountActivity;
 import ec.tec.ami.views.activities.LoginActivity;
 import ec.tec.ami.views.adapters.GalleryAdapter;
@@ -73,7 +74,7 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private SwipeRefreshLayout lytRefresh;
 
-    Button btnPerfilUpdate;
+    Button btnPerfilUpdate, btnDeleteAccount;
 
     DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -138,6 +139,33 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 startActivity(intent);
             }
         });
+
+        btnDeleteAccount = view.findViewById(R.id.btnDeleteAccount);
+        btnDeleteAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogDecision dialogDecision = new DialogDecision(PerfilFragment.this.getContext(), "Confirmation", "Do you want to delete your account? This is irreversible", new DialogDecision.DialogResult() {
+                    @Override
+                    public void onConfirm() {
+                        UserDAO.getInstance().deleteAccount(new UserEvent(){
+                            @Override
+                            public void onSuccess() {
+                                PerfilFragment.this.getActivity().finish();
+                                Intent intent = new Intent(PerfilFragment.this.getContext(),LoginActivity.class);
+                                startActivity(intent);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+                dialogDecision.show();
+            }
+        });
+
         setCurrentUser();
 
 

@@ -1,6 +1,7 @@
 package ec.tec.ami.views.fragments;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -49,6 +50,7 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
     private EditText txtNewPost;
     private View view;
 
+    private int POST = 99;
     private RecyclerView recyclerPosts;
     private SwipeRefreshLayout lytRefresh;
     private PostAdapter postAdapter;
@@ -119,7 +121,7 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private void newPost(){
         Intent intent = new Intent(getContext(), PostActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,POST);
     }
 
     private void newCursor(){
@@ -172,6 +174,17 @@ public class TimeLineFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == POST && resultCode == Activity.RESULT_OK){
+            itemCount = 0;
+            currentPage = PAGE_START;
+            isLastPage = false;
+            postAdapter.clear();
+            postAdapter.notifyDataSetChanged();
+            newCursor();
+        }
+    }
 
     @Override
     public void onRefresh() {

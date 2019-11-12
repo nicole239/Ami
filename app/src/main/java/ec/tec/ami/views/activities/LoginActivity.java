@@ -183,6 +183,8 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                     intent.putExtra("password", "");
                     intent.putExtra("isGoogle",true);
                     startActivity(intent);
+                }else{
+                    signOut();
                 }
             }
         });
