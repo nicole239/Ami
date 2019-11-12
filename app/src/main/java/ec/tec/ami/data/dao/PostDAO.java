@@ -318,4 +318,25 @@ public class PostDAO {
         });
 
     }
+
+    public void deletePost(final Post post, final PostEvent event){
+        final DatabaseReference reference = database.getReference().child("posts").child(post.getId());
+        reference.removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            event.onSuccess(true);
+                        }
+                        else{
+                            event.onSuccess(false);
+                        } }})
+                .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                event.onFailure(e);
+            }
+        });
+
+    }
 }

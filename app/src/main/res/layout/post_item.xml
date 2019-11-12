@@ -32,6 +32,17 @@
         android:layout_marginStart="10dp"
         android:text="Hace x tiempo"/>
 
+    <Button
+        android:id="@+id/btnDeletePost"
+        android:visibility="invisible"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/ic_close" />
+
     <TextView
         android:id="@+id/txtPostDescription"
         android:layout_width="match_parent"
