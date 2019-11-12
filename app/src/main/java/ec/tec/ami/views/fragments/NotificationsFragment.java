@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ec.tec.ami.R;
+import ec.tec.ami.data.dao.NotificationDAO;
 import ec.tec.ami.data.dao.UserDAO;
+import ec.tec.ami.data.event.NotificationEvent;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.Notification;
 import ec.tec.ami.model.User;
@@ -38,6 +41,7 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
     RecyclerView recyclerView;
     List<Notification> notifications = new ArrayList<>();
     NotificationAdapter adapter;
+    SwipeRefreshLayout refreshLayout;
 
 
     public NotificationsFragment() {
@@ -89,6 +93,13 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
         linearLayoutManager.setStackFromEnd(false);
         recyclerView.setLayoutManager(linearLayoutManager);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        refreshLayout = view.findViewById(R.id.lytRefresh);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshFriends();
+            }
+        });
 //        itemTouchHelper.attachToRecyclerView(recyclerView);
         refreshFriends();
         return view;
@@ -97,12 +108,32 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
 
     private void refreshFriends(){
         notifications.clear();
-        for(String str : new String[]{"kahho@gmail.com","steven.moya.quinones@gmail.com"}){
-            Notification notification = new Notification();
-            notification.setEmail(str);
-            notifications.add(notification);
-            adapter.notifyDataSetChanged();
-        }
+        adapter.notifyDataSetChanged();
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        User user = new User();
+        user.setEmail(email);
+        NotificationDAO.getInstance().getNotifications(user, new NotificationEvent(){
+            @Override
+            public void onSuccess(List<Notification> notifications) {
+                for(Notification notification : notifications){
+                    NotificationsFragment.this.notifications.add(notification);
+                }
+                refreshLayout.setRefreshing(false);
+                adapter.notifyDataSetChanged();
+                refreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(NotificationsFragment.this.getContext(),"Could not load the notifications", Toast.LENGTH_LONG).show();
+            }
+        });
+//        for(String str : new String[]{"kahho@gmail.com","steven.moya.quinones@gmail.com"}){
+//            Notification notification = new Notification();
+//            notification.setEmail(str);
+//            notifications.add(notification);
+//            adapter.notifyDataSetChanged();
+//        }
 //        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 //        User user = new User();
 //        user.setEmail(email);
@@ -124,8 +155,26 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
         UserDAO.getInstance().addFriends(email,notifications.get(position).getEmail(),new UserEvent(){
             @Override
             public void onSuccess() {
-                notifications.remove(position);
-                adapter.notifyItemRemoved(position);
+                refreshLayout.setRefreshing(true);
+                String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                User user = new User();
+                user.setEmail(email);
+                NotificationDAO.getInstance().removeNotification(user, notifications.get(position), new NotificationEvent(){
+                    @Override
+                    public void onSuccess() {
+                        notifications.remove(position);
+                        adapter.notifyItemRemoved(position);
+                        refreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        notifications.remove(position);
+                        adapter.notifyItemRemoved(position);
+                        refreshLayout.setRefreshing(false);
+                    }
+                });
+
             }
 
             @Override
@@ -136,8 +185,25 @@ public class NotificationsFragment extends Fragment implements NotificationAdapt
     }
 
     @Override
-    public void onReject(int position) {
-        notifications.remove(position);
-        adapter.notifyItemRemoved(position);
+    public void onReject(final int position) {
+        refreshLayout.setRefreshing(true);
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        User user = new User();
+        user.setEmail(email);
+        NotificationDAO.getInstance().removeNotification(user, notifications.get(position), new NotificationEvent(){
+            @Override
+            public void onSuccess() {
+                notifications.remove(position);
+                adapter.notifyItemRemoved(position);
+                refreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(NotificationsFragment.this.getContext(),"Could not reject the notification :(", Toast.LENGTH_SHORT).show();
+                refreshLayout.setRefreshing(false);
+            }
+        });
+
     }
 }

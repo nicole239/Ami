@@ -21,6 +21,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.List;
 
+import ec.tec.ami.data.event.NotificationEvent;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.User;
 
@@ -306,6 +307,30 @@ public class UserDAO {
                         event.onFailure(e);
                     }
                 });
+    }
+
+    public void checkFriend(String email1, String email2, final UserEvent event){
+        User user1 = new User();
+        user1.setEmail(email1);
+        User user2 = new User();
+        user2.setEmail(email2);
+        DatabaseReference reference = database.getReference().child("users/"+user2.getID()+"/friends").child(user1.getID());
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    event.onSuccess(true);
+                }else {
+                    event.onSuccess(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                event.onFailure(null);
+            }
+        });
+
     }
 
 

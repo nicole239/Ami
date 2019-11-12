@@ -27,9 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ec.tec.ami.R;
+import ec.tec.ami.data.dao.NotificationDAO;
 import ec.tec.ami.data.dao.PostCursor;
 import ec.tec.ami.data.dao.UserDAO;
 import ec.tec.ami.data.dao.filter.UserFilter;
+import ec.tec.ami.data.event.NotificationEvent;
 import ec.tec.ami.data.event.UserEvent;
 import ec.tec.ami.model.Education;
 import ec.tec.ami.model.Post;
@@ -62,6 +64,7 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
     private PostCursor cursor;
     Intent intent;
     String showPerfilUserEmail;
+    Button btnSolicitud;
 
     private SwipeRefreshLayout lytRefresh;
     private RelativeLayout galleryLayout;
@@ -110,7 +113,7 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
 
 
         lytRefresh = findViewById(R.id.lytRefresh);
-        //lytRefresh.setOnRefreshListener(ShowProfileActivity.this);
+        lytRefresh.setOnRefreshListener(ShowProfileActivity.this);
 
         Button btnPerfilViewData = findViewById(R.id.showPerfilBtnPerfilViewData);
         btnPerfilViewData.setOnClickListener(new View.OnClickListener() {
@@ -131,15 +134,13 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
             }
         });
 
-        Button btnSolicitud = findViewById(R.id.showPerfilBtnPerfilAddDelFriend);
+        btnSolicitud = findViewById(R.id.showPerfilBtnPerfilAddDelFriend);
         btnSolicitud.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openSendRequestDialog();
             }
         });
-
-
 
         setCurrentUser(showPerfilUserEmail);
 
@@ -156,8 +157,36 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
 
     private void setCurrentUser(String email){
 
-        Log.i("PERFIL_TAG",email);
-        UserDAO.getInstance().getUser(email, new UserEvent() {
+        final String emailUser = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        if(!emailUser.equals(showPerfilUserEmail)){
+            UserDAO.getInstance().checkFriend(emailUser, showPerfilUserEmail, new UserEvent(){
+                @Override
+                public void onSuccess(boolean state) {
+                    if(state){
+                        btnSolicitud.setVisibility(View.INVISIBLE);
+                    }else{
+                        NotificationDAO.getInstance().checkNotification(emailUser, showPerfilUserEmail, new NotificationEvent(){
+                            @Override
+                            public void onNotificationSent() {
+                                btnSolicitud.setText("Request sent");
+                                btnSolicitud.setEnabled(false);
+                            }
+
+                            @Override
+                            public void onNotificationReceived() {
+                                btnSolicitud.setText("Request received");
+                                btnSolicitud.setEnabled(false);
+                            }
+                        });
+                    }
+                }
+            });
+        }else{
+            btnSolicitud.setVisibility(View.INVISIBLE);
+        }
+
+        Log.i("PERFIL_TAG",emailUser);
+        UserDAO.getInstance().getUser(emailUser, new UserEvent() {
             @Override
             public void onSuccess(User user){
                 Log.i("PERFIL_TAG",user.getName());

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ public class AmigosFragment extends Fragment implements UserAdapter.UserListener
     RecyclerView recyclerView;
     List<User> friends = new ArrayList<>();
     UserAdapter adapter;
+    SwipeRefreshLayout lytRefresh;
 
     public AmigosFragment() {
         // Required empty public constructor
@@ -53,6 +55,13 @@ public class AmigosFragment extends Fragment implements UserAdapter.UserListener
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setStackFromEnd(false);
         recyclerView.setLayoutManager(linearLayoutManager);
+        lytRefresh = view.findViewById(R.id.lytRefresh);
+        lytRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshFriends();
+            }
+        });
         refreshFriends();
         return view;
     }
@@ -69,6 +78,12 @@ public class AmigosFragment extends Fragment implements UserAdapter.UserListener
                     friends.add(u);
                 }
                 adapter.notifyDataSetChanged();
+                lytRefresh.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                lytRefresh.setRefreshing(false);
             }
         });
     }
