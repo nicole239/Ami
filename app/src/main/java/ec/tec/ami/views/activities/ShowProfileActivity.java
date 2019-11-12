@@ -183,8 +183,8 @@ public class ShowProfileActivity extends AppCompatActivity implements SwipeRefre
             btnSolicitud.setVisibility(View.INVISIBLE);
         }
 
-        Log.i("PERFIL_TAG",emailUser);
-        UserDAO.getInstance().getUser(emailUser, new UserEvent() {
+        Log.i("PERFIL_TAG",email);
+        UserDAO.getInstance().getUser(email, new UserEvent() {
             @Override
             public void onSuccess(User user){
                 Log.i("PERFIL_TAG",user.getName());
