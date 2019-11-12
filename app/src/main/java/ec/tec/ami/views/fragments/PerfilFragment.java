@@ -268,15 +268,18 @@ public class PerfilFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 Log.i("PERFIL_TAG","Agregando foto: " + post.getMedia() );
             }
         }
-        LinearLayoutManager layoutManager= new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
-        listPhotos.setLayoutManager(layoutManager);
-        galleryAdapter = new GalleryAdapter(getContext(),photos, galleryLayout, galleryPosts);
-        listPhotos.setAdapter(galleryAdapter);
-
-        LinearLayoutManager galleryLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
-        galleryPosts.setLayoutManager(galleryLayoutManager);
-        PostAdapter galleryPostAdapter = new PostAdapter(getContext(), photos);
-        galleryPosts.setAdapter(galleryPostAdapter);
+        if(getContext() != null) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            listPhotos.setLayoutManager(layoutManager);
+            galleryAdapter = new GalleryAdapter(getContext(), photos, galleryLayout, galleryPosts);
+            listPhotos.setAdapter(galleryAdapter);
+        }
+        if(getContext() != null) {
+            LinearLayoutManager galleryLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            galleryPosts.setLayoutManager(galleryLayoutManager);
+            PostAdapter galleryPostAdapter = new PostAdapter(getContext(), photos);
+            galleryPosts.setAdapter(galleryPostAdapter);
+        }
 
     }
 

@@ -80,6 +80,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Post post = mData.get(position);
+        String email = "";
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        }
+        if(email.isEmpty()){
+            return;
+        }
 
         //holder.imgUser.setImageBitmap(post.getUsuario().getImage());
         holder.multimediaFrame.setVisibility(View.GONE);
@@ -114,7 +121,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Log.d("Video", urll);
             }
         }
-        if(post.checkUserLike(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+        if(post.checkUserLike(email)){
             String hola = String.valueOf(post.getTotalLikes());
             holder.txtLikes.setText(hola+" You liked this ");
         }
@@ -122,7 +129,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
         }
 
-        if(post.checkUserDislike(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+        if(post.checkUserDislike(email)){
             String dislikes = String.valueOf(post.getTotalDislikes());
             holder.txtDislikes.setText(dislikes + "You disliked this");
         }
@@ -150,51 +157,52 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
+        final String finalEmail = email;
         holder.labelLikes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
 
 
 
-                PostDAO.getInstance().likePost(mData.get(position),new PostEvent(){
-                    @Override
-                    public void onSuccess(boolean status) {
-                        if(status){
-                            Toast.makeText(view.getContext(), "Likes has beed added", Toast.LENGTH_LONG).show();
-                            holder.txtLikes.setText(post.getTotalLikes()+" You liked this");
+            PostDAO.getInstance().likePost(mData.get(position),new PostEvent(){
+                @Override
+                public void onSuccess(boolean status) {
+                    if(status){
+                        Toast.makeText(view.getContext(), "Likes has beed added", Toast.LENGTH_LONG).show();
+                        holder.txtLikes.setText(post.getTotalLikes()+" You liked this");
 
-                            PostDAO.getInstance().deleteDislike(FirebaseAuth.getInstance().getCurrentUser().getEmail(),mData.get(position),new PostEvent(){
-                                @Override
-                                public void onSuccess(boolean status) {
-                                    if(status){
-                                        if(post.getDislikes().size()>0){
-                                            post.getDislikes().remove(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                                            holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
-                                        }
+                        PostDAO.getInstance().deleteDislike(finalEmail,mData.get(position),new PostEvent(){
+                            @Override
+                            public void onSuccess(boolean status) {
+                                if(status){
+                                    if(post.getDislikes().size()>0){
+                                        post.getDislikes().remove(finalEmail);
+                                        holder.txtDislikes.setText(String.valueOf(post.getTotalDislikes()));
                                     }
                                 }
+                            }
 
-                                @Override
-                                public void onFailure(Exception e) {
-                                    super.onFailure(e);
-                                }
-                            });
+                            @Override
+                            public void onFailure(Exception e) {
+                                super.onFailure(e);
+                            }
+                        });
 
-                        }else {
-                            Toast.makeText(view.getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
-                        }
+                    }else {
+                        Toast.makeText(view.getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                     }
+                }
 
-                    @Override
-                    public void onRepeated() {
-                        Toast.makeText(view.getContext(), "Ya le di like", Toast.LENGTH_LONG).show();
-                    }
+                @Override
+                public void onRepeated() {
+                    Toast.makeText(view.getContext(), "Ya le di like", Toast.LENGTH_LONG).show();
+                }
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(view.getContext(), "Failure on addind likes", Toast.LENGTH_LONG).show();
-                    }
-                });
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(view.getContext(), "Failure on addind likes", Toast.LENGTH_LONG).show();
+                }
+            });
             }
         });
 
@@ -214,12 +222,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                             Toast.makeText(view.getContext(), "Disikes has beed added", Toast.LENGTH_LONG).show();
                             holder.txtDislikes.setText(post.getTotalDislikes()+" You dislike this");
 
-                            PostDAO.getInstance().deleteLike(FirebaseAuth.getInstance().getCurrentUser().getEmail(),mData.get(position), new PostEvent(){
+                            PostDAO.getInstance().deleteLike(finalEmail,mData.get(position), new PostEvent(){
                                 @Override
                                 public void onSuccess(boolean status) {
                                     if(status){
                                         if(post.getLikes().size()>0){
-                                            post.getLikes().remove(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                                            post.getLikes().remove(finalEmail);
                                             holder.txtLikes.setText(String.valueOf(post.getTotalLikes()));
                                         }
                                     }
@@ -314,7 +322,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.userCommentSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserDAO.getInstance().getUser(FirebaseAuth.getInstance().getCurrentUser().getEmail(), new UserEvent(){
+                UserDAO.getInstance().getUser(finalEmail, new UserEvent(){
 
                     @Override
                     public void onSuccess(User user) {
@@ -356,7 +364,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
-        String currentMail =  FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String currentMail =  finalEmail;
         if(currentMail.equals(post.getUser())){
             holder.btnDeletePost.setVisibility(View.VISIBLE);
         }else{
