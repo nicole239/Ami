@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -144,6 +145,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Log.d("hola", mData.get(position).getUser());
                 intent.putExtra("showPerfilUser", mData.get(position).getUser());
                 mContext.startActivity(intent);
+            }
+        });
+
+        PostDAO.getInstance().loadCommentNum(post, new PostEvent(){
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(mContext,"Error en cargar Comments",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(int numComments) {
+                holder.postCommentsNum.setText(String.valueOf(numComments));
             }
         });
 
@@ -411,7 +424,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imgUser, img, labelLikes, labelDislikes, imgComments;
-        TextView txtName, txtTime, txtDescription, txtLikes, txtDislikes,userCommentNameTxt;
+        TextView txtName, txtTime, txtDescription, txtLikes, txtDislikes,userCommentNameTxt, postCommentsNum;
         WebView video;
         RelativeLayout multimediaFrame, layoutComment;
         ListView listComments;
@@ -426,6 +439,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             txtName = itemView.findViewById(R.id.txtPostName);
             txtTime = itemView.findViewById(R.id.txtPostTime);
             txtDescription = itemView.findViewById(R.id.txtPostDescription);
+            postCommentsNum = itemView.findViewById(R.id.txtPostCommentsNum);
             img = itemView.findViewById(R.id.imgPost);
             video = itemView.findViewById(R.id.videoPost);
             video.getSettings().setJavaScriptEnabled(true);

@@ -11,4 +11,5 @@ public class PostEvent {
     public void onFailure(Exception e){};
     public void onSuccess(List<Post> users){};
     public void onSuccess(Post user){};
+    public void onSuccess(int numComments){};
 }
