@@ -132,11 +132,6 @@ public class ShowCommentsActivity extends AppCompatActivity {
                     comments.add(child.getValue(Comment.class));
                 }
                 Log.d("hola", "numero es: "+comments.size());
-
-                for(int i=0; i<comments.size();i++){
-                    Log.d("hola",comments.get(i).getComment());
-                }
-
                 CommentAdapter adapter = new CommentAdapter(ShowCommentsActivity.this, comments);
                 listComments.setAdapter(adapter);
 

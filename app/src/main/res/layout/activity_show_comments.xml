@@ -46,6 +46,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
     <LinearLayout
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -54,7 +55,7 @@
             android:id="@+id/listPostComments"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:dividerHeight="0dp"
+            android:dividerHeight="10dp"
             android:divider="@null"/>
     </LinearLayout>
     <LinearLayout

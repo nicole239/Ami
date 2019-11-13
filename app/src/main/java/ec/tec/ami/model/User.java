@@ -12,7 +12,7 @@ public class User implements Serializable {
     private String lastNameA;
     private String lastNameB;
     private String profilePhoto;
-    private List<Education> education;
+    private List<Education> education = new ArrayList<>();
     private Date birthDay;
     private String gender;
     private String city;

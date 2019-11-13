@@ -86,6 +86,27 @@ public class PostDAO {
 
     }
 
+    public void loadCommentNum(final Post post, final PostEvent event){
+        FirebaseDatabase firebaseDatabasee = FirebaseDatabase.getInstance();
+        DatabaseReference reference = firebaseDatabasee.getReference().child("posts").child(post.getId()).child("comentarios");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Comment> comments = new ArrayList<Comment>();
+                for (DataSnapshot child : dataSnapshot.getChildren()){
+                    comments.add(child.getValue(Comment.class));
+                }
+                event.onSuccess(comments.size());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void likePost(final Post post, final PostEvent event){
         final DatabaseReference reference = database.getReference().child("posts").child(post.getId()).child("likes");
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
