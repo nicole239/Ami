@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -47,6 +48,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             @Override
             public void onSuccess(User user) {
                 loadContent(holder,user);
+            }
+        });
+        UserDAO.getInstance().getCommonFriendsCount(FirebaseAuth.getInstance().getCurrentUser().getEmail(),notifications.get(position).getEmail(),new UserEvent(){
+            @Override
+            public void onSuccess(int count) {
+                holder.friendsInCommon.setText(count + " friends in common");
             }
         });
 

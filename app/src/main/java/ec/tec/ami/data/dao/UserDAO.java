@@ -21,7 +21,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import ec.tec.ami.data.event.NotificationEvent;
 import ec.tec.ami.data.event.PostEvent;
@@ -310,6 +314,47 @@ public class UserDAO {
                         event.onFailure(e);
                     }
                 });
+    }
+
+    public void getCommonFriendsCount(String email, String friend, final UserEvent event){
+        User user = new User();
+        user.setEmail(email);
+        final User userFriend = new User();
+        userFriend.setEmail(friend);
+
+        DatabaseReference reference = database.getReference().child("users").child(user.getID()).child("friends");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                DatabaseReference reference2 = database.getReference().child("users").child(userFriend.getID()).child("friends");
+                reference2.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot2) {
+                        if(!dataSnapshot.exists() || !dataSnapshot2.exists()){
+                            event.onSuccess(0);
+                            return;
+                        }
+                        Map<String, String> map1 = ( Map<String, String>)dataSnapshot.getValue();
+                        Map<String, String> map2 = ( Map<String, String>)dataSnapshot2.getValue();
+                        Set set = new HashSet(map1.keySet());
+                        set.retainAll(map2.keySet());
+                        event.onSuccess(set.size());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        event.onSuccess(0);
+                        return;
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                event.onSuccess(0);
+                return;
+            }
+        });
     }
 
     public void checkFriend(String email1, String email2, final UserEvent event){

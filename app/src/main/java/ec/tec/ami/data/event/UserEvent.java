@@ -10,4 +10,5 @@ public class UserEvent {
     public void onFailure(Exception e){};
     public void onSuccess(List<User> users){};
     public void onSuccess(User user){};
+    public void onSuccess (int count){}
 }
